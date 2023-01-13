@@ -15,7 +15,7 @@
 			<span
 				in:fly={{ x: -275, duration: 1250 }}
 				class="ml-1 bg-gradient-to-br from-green-300 to-green-700 bg-clip-text text-5xl font-bold tracking-wider text-transparent"
-				>ChatRoom</span>
+				>Bubble</span>
 			<nav
 				in:fly={{ x: 275, duration: 1250 }}
 				class="grid max-w-fit grid-flow-col grid-rows-1 items-center divide-x-[1px] divide-slate-700 justify-self-end">

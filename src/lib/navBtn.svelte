@@ -10,14 +10,14 @@
 	<a href={URL} class="flex px-1">
 		<button
 			in:fly={{ x: 275, duration: Number(Time) }}
-			class="group rounded-full p-1.5 shadow-sm transition-all duration-200 ease-in hover:bg-zinc-700 hover:shadow-md hover:shadow-green-400/25">
+			class="group rounded-full p-1.5 shadow-sm transition-all duration-150 ease-in hover:bg-zinc-700 hover:shadow-md hover:shadow-green-400/25">
 			<svg
 				xmlns="http://www.w3.org/2000/svg"
 				fill="none"
 				viewBox="0 0 24 24"
 				stroke-width="1.5"
 				stroke="currentColor"
-				class="h-8 w-8 transition-all delay-75 duration-200 ease-in group-hover:text-green-400 group-hover:w-9 group-hover:h-9">
+				class="h-8 w-8 transition-all delay-75 duration-150 ease-in group-hover:h-9 group-hover:w-9 group-hover:text-green-400">
 				<path stroke-linecap="round" stroke-linejoin="round" d={SVG} />
 			</svg>
 		</button>

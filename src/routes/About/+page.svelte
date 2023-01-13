@@ -39,7 +39,9 @@
 						</svg>
 					</button>
 				{:else}
-					<p in:fly={{ x: 150, duration: 1000 }} class="text-green-400">And that's exactly what I did.</p>
+					<p in:fly={{ x: 150, duration: 1000 }} class="text-green-400">
+						And that's exactly what I did.
+					</p>
 				{/if}
 			</div>
 		</article>
