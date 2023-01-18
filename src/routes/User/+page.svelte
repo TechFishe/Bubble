@@ -14,14 +14,14 @@
 		<div class="grid" in:fly={{ y: 225, duration: 1425 }}>
 			<div
 				class="grid max-w-fit grid-flow-col grid-rows-1 items-center divide-x-2 divide-slate-700 justify-self-center">
-				<div class="flex px-2">
+				<div class="flex px-2.5">
 					<button
-						class="rounded-md bg-slate-800 px-4 py-1 text-xl shadow-sm transition-all delay-75 duration-300 ease-in-out hover:text-2xl hover:text-green-400 hover:shadow-md hover:shadow-green-400/25"
+						class="rounded-md bg-slate-800 px-4 py-1 text-xl shadow-sm transition-all delay-75 duration-300 ease-in-out hover:scale-[1.075] hover:text-green-400 hover:shadow-md hover:shadow-green-400/25"
 						>Log in</button>
 				</div>
-				<div class="flex px-2">
+				<div class="flex px-2.5">
 					<button
-						class="rounded-md bg-slate-800 px-4 py-1 text-xl shadow-sm transition-all delay-75 duration-300 ease-in-out hover:text-2xl hover:text-green-400 hover:shadow-md hover:shadow-green-400/25"
+						class="rounded-md bg-slate-800 px-4 py-1 text-xl shadow-sm transition-all delay-75 duration-300 ease-in-out hover:scale-[1.075] hover:text-green-400 hover:shadow-md hover:shadow-green-400/25"
 						>Sign up</button>
 				</div>
 			</div>

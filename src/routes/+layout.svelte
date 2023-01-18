@@ -3,6 +3,7 @@
 	import NavBtn from '$lib/navBtn.svelte';
 	import { fly, fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
+	const prerender = true;
 
 	let canPlay: boolean = false,
 		fishTalk: boolean = false;
