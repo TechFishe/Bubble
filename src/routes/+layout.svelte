@@ -19,11 +19,11 @@
 	<header
 		class="z-40 grid h-16 w-screen grid-flow-col items-center rounded-b-lg bg-slate-800/95 px-3 py-1 backdrop-blur-[2px]">
 		{#if canPlay}
-			<div
-				class="grid max-w-fit grid-cols-2 grid-rows-1 divide-x-[1px] divide-slate-700 text-green-400">
+			<section
+				class="grid max-w-fit grid-cols-2 grid-rows-1 divide-x-[1.5px] divide-slate-700 text-green-400">
 				<span
 					in:fly={{ x: -275, duration: 1250 }}
-					class="ml-1 grid max-w-fit items-center pr-1.5 text-5xl font-bold tracking-wider"
+					class="ml-1 grid max-w-fit select-none items-center pr-1.5 text-5xl font-bold tracking-wider"
 					>Bubble
 				</span>
 				<div class="flex max-w-fit pl-1.5">
@@ -61,7 +61,7 @@
 						</svg>
 					{/if}
 				</div>
-			</div>
+			</section>
 			<nav
 				in:fly={{ x: 275, duration: 1250 }}
 				class="grid max-w-fit grid-flow-col grid-rows-1 items-center divide-x-[1px] divide-slate-700 justify-self-end">
@@ -85,4 +85,29 @@
 		{/if}
 	</header>
 	<slot />
+	{#if canPlay}
+		<section class="absolute bottom-0 flex w-screen justify-center" in:fade={{ duration: 1150 }}>
+			<footer
+				class="mt-5 inline-block w-[97.5%] divide-x-[1px] border-t-2 border-slate-700 py-2.5 px-5">
+				<small class="select-none pr-2 italic text-green-400"
+					>Copyright &copy; TechFishe 2023</small>
+				<small class="px-2"
+					>Check us out on <a
+						href="https://github.com/TechFishe/Bubble"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="underline transition-colors delay-75 duration-150 ease-in hover:text-orange-600"
+						>GitHub!</a
+					></small>
+				<small class="px-2"
+					>Personal site: <a
+						href="https://techfishe.vercel.app"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="underline transition-colors delay-75 duration-150 ease-in hover:text-fuchsia-500"
+						>TechFishe.com</a
+					></small>
+			</footer>
+		</section>
+	{/if}
 </div>

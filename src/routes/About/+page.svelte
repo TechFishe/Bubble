@@ -13,7 +13,7 @@
 			<h1 in:fly={{ y: 150, duration: 1250 }} class="text-6xl tracking-wide">About</h1>
 			<p in:fly={{ y: 175, duration: 1400 }}>Get to know me a little bit :)</p>
 		</header>
-		<article in:fly={{ y: 250, duration: 1250 }}>
+		<section in:fly={{ y: 250, duration: 1250 }}>
 			<h2 class="justify-center text-4xl tracking-wide">
 				<span class="border-t-2 border-slate-700 pt-1">About The Site</span>
 			</h2>
@@ -39,11 +39,11 @@
 						</svg>
 					</button>
 				{:else}
-					<p in:fly={{ x: 150, duration: 1000 }} class="text-green-400">
+					<p in:fly={{ x: 150, duration: 1000 }} class="select-none text-green-400">
 						And that's exactly what I did.
 					</p>
 				{/if}
 			</div>
-		</article>
+		</section>
 	{/if}
 </main>

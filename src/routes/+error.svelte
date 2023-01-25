@@ -25,11 +25,11 @@
 				I'll try and fix it soon :)
 			</p>
 		</header>
-		<div>
+		<article>
 			<h2 in:fly={{ y: 200, duration: 1300 }} class="pt-5 pb-1 text-5xl font-bold tracking-wide">
 				<span class="border-t-2 border-slate-700 pt-1">Error code:</span>
 			</h2>
 			<p in:fly={{ y: 225, duration: 1450 }}>{$page.error?.message}</p>
-		</div>
+		</article>
 	{/if}
 </main>
