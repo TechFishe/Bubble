@@ -26,12 +26,12 @@
 	}
 </script>
 
-<main class="w-screen flex-col justify-center px-4 text-center">
+<main class="px-4 text-center">
 	{#if canPlay}
 		{#if base}
 			<section>
 				<header class="pb-4">
-					<h1 in:fly={{ y: 75, duration: 1050 }} class="text-6xl tracking-wide">User</h1>
+					<h1 in:fly={{ y: 75, duration: 1050 }} class="text-6xl tracking-wider">User</h1>
 					<p in:fly={{ y: 100, duration: 1200 }}>Log in or sign up</p>
 				</header>
 				<div class="grid" in:fly={{ y: 150, duration: 1225 }}>
@@ -78,7 +78,7 @@
 							id="email"
 							placeholder="Email"
 							required
-							class="formIn hover:scale-105" />
+							class="formIn" />
 					</div>
 					<div class="gridCell">
 						<label for="pass">
@@ -98,7 +98,7 @@
 							id="pass"
 							placeholder="Password"
 							required
-							class="formIn hover:scale-105" />
+							class="formIn" />
 					</div>
 					<div
 						in:fly={{ y: 100, duration: 1350 }}
@@ -170,7 +170,7 @@
 							id="email"
 							placeholder="Email"
 							required
-							class="formIn hover:scale-105" />
+							class="formIn" />
 					</div>
 					<div class="gridCell">
 						<label for="pass">
@@ -190,7 +190,7 @@
 							id="pass"
 							placeholder="Password"
 							required
-							class="formIn hover:scale-105" />
+							class="formIn" />
 					</div>
 					<div class="gridCell">
 						<label for="pass2">
@@ -210,9 +210,9 @@
 							id="pass2"
 							placeholder="Re-enter Password"
 							required
-							class="formIn hover:scale-105" />
+							class="formIn" />
 					</div>
-					<div
+					<section
 						in:fly={{ y: 100, duration: 1350 }}
 						class="col-span-2 flex justify-center justify-self-center pt-10 pb-5">
 						<button
@@ -231,7 +231,7 @@
 							</svg>
 							<span>Submit</span>
 						</button>
-					</div>
+					</section>
 				</form>
 				<div class="flex justify-center">
 					<div
@@ -262,16 +262,10 @@
 </main>
 
 <style>
-	h2 {
-		@apply max-w-fit text-5xl;
-	}
-	label {
-		@apply grid max-w-fit content-center fill-red-400 text-red-400;
-	}
-	.formIn {
-		@apply grow rounded-lg bg-slate-700 px-2 py-1 text-lg caret-green-400 shadow-md shadow-slate-700/50 outline-none transition-transform duration-200 ease-in;
-	}
-	.gridCell {
-		@apply col-span-2 row-span-1 flex content-center gap-x-3;
-	}
+	h2 { @apply max-w-fit text-5xl tracking-wide font-bold; }
+	label { @apply grid max-w-fit content-center fill-red-400 text-red-400; }
+	.formIn { @apply grow rounded-lg bg-slate-700 px-2 py-1 text-lg caret-green-400 shadow-md shadow-slate-700/50 outline-none transition-transform duration-200 ease-in; }
+	.formIn:hover{ @apply scale-105; }
+	.formIn:focus{ @apply scale-[1.025]; }
+	.gridCell { @apply col-span-2 row-span-1 flex content-center gap-x-3; }
 </style>

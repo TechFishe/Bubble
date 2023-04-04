@@ -7,7 +7,7 @@
 </script>
 
 <div>
-	<a href={URL} class="flex px-[0.35rem]">
+	<a href={URL} class="flex px-5">
 		<button
 			in:fly={{ x: 275, duration: Number(Time) }}
 			class="group rounded-full p-1.5 shadow-sm transition-all duration-150 ease-in hover:scale-[1.075] hover:bg-zinc-700 hover:shadow-md hover:shadow-green-400/25">
