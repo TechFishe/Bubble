@@ -6,6 +6,10 @@
 	onMount(() => (canPlay = true));
 </script>
 
+<svelte:head>
+    <title>Home</title>
+</svelte:head>
+
 <main>
 	<header class="text-center">
 		{#if canPlay}

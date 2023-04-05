@@ -7,6 +7,10 @@
 	onMount(() => (canPlay = true));
 </script>
 
+<svelte:head>
+    <title>About</title>
+</svelte:head>
+
 <main class="w-screen flex-col justify-center px-4 text-center">
 	{#if canPlay}
 		<header class="pb-4">

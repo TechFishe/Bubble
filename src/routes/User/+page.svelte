@@ -26,6 +26,10 @@
 	}
 </script>
 
+<svelte:head>
+    <title>Users</title>
+</svelte:head>
+
 <main class="px-4 text-center">
 	{#if canPlay}
 		{#if base}

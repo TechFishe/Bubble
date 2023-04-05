@@ -21,7 +21,7 @@
 			<section class="grid max-w-fit grid-cols-2 grid-rows-1 divide-x-[1.5px] divide-slate-700 text-green-400">
 				<h1
 					in:fly={{ x: -275, duration: 1250 }}
-					class="ml-1 flex max-w-fit select-none items-center pr-1.5 text-5xl font-black"
+					class="ml-1 flex max-w-fit items-center pr-1.5 text-5xl font-black"
 					>Bubble
 				</h1>
 				<div class="flex max-w-fit pl-1.5">
