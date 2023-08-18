@@ -56,8 +56,8 @@ export default function Page(){
             </aside>
             <main className="w-5/6 h-full flex flex-col">
                 <section className="w-full h-full"></section>
-                <form action="" method="POST" className="self-end flex w-full debug px-4 py-2">
-                    <input type="text" name="MSG Input" id="msg" autoCorrect="true" required className="flex flex-grow bg-slate-700 rounded-l-md px-1" />
+                <form className="self-end flex w-full debug px-4 py-2">
+                    <input  type="text" name="MSG Input" id="msg" autoCorrect="true" required className="flex flex-grow bg-slate-700 rounded-l-md px-1" />
                     <button type="submit" className="bg-slate-700 rounded-r-md px-1.5 py-0.5 group">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-8 h-8 transition-color duration-150 ease-in group-hover:text-green-400">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
