@@ -1,0 +1,4 @@
+.one{
+    display: flex;
+    height: calc(100vh - 108px);
+}
