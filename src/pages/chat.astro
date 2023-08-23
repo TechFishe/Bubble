@@ -1,0 +1,61 @@
+---
+  import Layout from "../layouts/Layout.astro";
+
+  import { app } from "../firebase/server";
+  import { getFirestore } from "firebase-admin/firestore";
+
+  interface Chat {
+    id: string,
+    author: string,
+    msg: string
+  }
+
+  const db = getFirestore(app);
+  const chatsRef = db.collection("chats").orderBy("createdAt", "desc");
+  const chatsSnapshot = await chatsRef.get();
+  const chats = chatsSnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data()})) as Chat[];
+---
+
+<Layout title="Chat">
+  <div class="one">
+    <aside class="w-1/6 border-r-2 border-slate-50">
+        <section class="border-b-[1px] border-slate-700 flex items-center">
+            <h2 class="flex flex-grow text-5xl tracking-wider font-bold">Friends</h2>
+            <button class="flex w-fit h-fit mr-2 group rounded-full p-1.5 shadow-sm transition-all duration-150 ease-in hover:scale-[1.075] hover:bg-zinc-700 hover:shadow-md hover:shadow-green-400/25">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-Width={1.5} stroke="currentColor" class="w-6 h-6 transition-color delay-75 duration-150 ease-in group-hover:text-green-400">
+                  <path stroke-Linecap="round" stroke-Linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
+                </svg>
+            </button>
+        </section>
+        <section>
+        </section>
+    </aside>
+    <main class="w-5/6 h-full flex flex-col">
+        <ol class="h-full px-4 flex flex-col-reverse">
+          {
+            chats.map((chat: Chat) => (
+              <li>{chat.msg}</li>
+            ))
+          }
+        </ol>
+        <form method="post" action="/api/chats" class="self-end flex w-full px-4 py-2">
+            <input  type="text" name="msg" id="msg" class="flex flex-grow bg-slate-700 rounded-l-md px-1" />
+            <button type="submit" class="bg-slate-700 rounded-r-md px-1.5 py-0.5 group">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-Width={1.5} stroke="currentColor" class="w-8 h-8 transition-color duration-150 ease-in group-hover:text-green-400">
+                  <path stroke-Linecap="round" stroke-Linejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                </svg>
+            </button>
+        </form>
+    </main>
+  </div>
+</Layout>
+
+
+<style>
+  .one{
+    display: flex;
+    height: calc(100vh - 108px);
+  }
+</style>
