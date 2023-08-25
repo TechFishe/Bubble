@@ -1,0 +1,31 @@
+---
+    import Layout from "../layouts/Layout.astro";
+    import "../css/SignInForm.css"
+---
+
+<Layout title="Sign Up">
+    <main>
+        <h2 class="text-5xl tracking-wider font-bold text-center">Sign In</h2>
+        <form action="/api/auth/signup" method="post">
+            <label for="email">
+                <span>Email</span>
+                <span class="ast">&ast;</span>
+            </label>
+            <input type="email" name="email" required class="px-1 py-0.5" />
+            <label for="password">
+                <span>Password</span>
+                <span class="ast">&ast;</span>
+            </label>
+            <input type="password" name="password" required class="px-1 py-0.5" />
+            <label for="username">
+                <span>Username</span>
+                <span class="ast">&ast;</span>
+            </label>
+            <input type="text" name="username" required class="px-1 py-0.5" />
+            <!-- <p class="text-center">New here? Click <a href="/signup" class="underline">here</a> to sign up for an account</p> -->
+            <button type="submit" class="group">
+                <span class="group-hover:text-green-400">Sign in</span>
+            </button>
+        </form>
+    </main>
+</Layout>

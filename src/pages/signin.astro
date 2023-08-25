@@ -1,0 +1,58 @@
+---
+    import Layout from "../layouts/Layout.astro";
+    import "../css/SignInForm.css";
+---
+
+<Layout title="Sign In">
+    <main>
+        <h2 class="text-5xl tracking-wider font-bold text-center">Sign In</h2>
+        <form action="/api/auth/signin" method="post">
+            <label for="email">
+                <span>Email</span>
+                <span class="ast">&ast;</span>
+            </label>
+            <input type="email" name="email" required class="px-1 py-0.5" />
+            <label for="password">
+                <span>Password</span>
+                <span class="ast">&ast;</span>
+            </label>
+            <input type="password" name="password" required class="px-1 py-0.5" />
+            <p class="text-center">New here? Click <a href="/signup" class="underline">here</a> to sign up for an account</p>
+            <button type="submit" class="group">
+                <span class="group-hover:text-green-400">Sign in</span>
+            </button>
+        </form>
+    </main>
+</Layout>
+<script>
+    import { getAuth, inMemoryPersistence, signInWithEmailAndPassword } from "firebase/auth";
+    import { app } from "../firebase/client";
+  
+    const auth = getAuth(app);
+    // This will prevent the browser from storing session data
+    auth.setPersistence(inMemoryPersistence);
+  
+    const form = document.querySelector("form") as HTMLFormElement;
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const email = formData.get("email")?.toString();
+        const password = formData.get("password")?.toString();
+        
+        if (!email || !password) return;
+        const userCredential = await signInWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
+        const idToken = await userCredential.user.getIdToken();
+        const response = await fetch("/api/auth/signin", {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${idToken}`,
+            },
+        });
+      
+        if (response.redirected) window.location.assign(response.url);
+    });
+  </script>
