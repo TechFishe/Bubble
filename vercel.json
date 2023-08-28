@@ -1,0 +1,8 @@
+{
+    "framework": "astro",
+    "functions": {
+        "src/pages/api/chats/index.ts":{
+            
+        }
+    }
+}
