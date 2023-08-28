@@ -5,7 +5,7 @@ import { firestore } from "firebase-admin";
 
 export const post: APIRoute = async ({ request, redirect }) => {
   const formData = await request.formData();
-  const author = formData.get("username");
+  const author = "TechFishe"
   const msg = formData.get("msg");
 
   if (!msg) {
