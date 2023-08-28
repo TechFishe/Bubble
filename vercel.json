@@ -2,7 +2,7 @@
     "framework": "astro",
     "functions": {
         "src/pages/api/chats/index.ts":{
-            
+            "memory": 1024
         }
     }
 }
