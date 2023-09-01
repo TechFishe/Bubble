@@ -38,7 +38,7 @@ export default function User(){
     }
 
     async function logInWithEmail(){
-        const {data, error} = await supabase.auth.signInWithPassword({email, password: pass});
+        const {error} = await supabase.auth.signInWithPassword({email, password: pass});
         if(error) throw error
         else{
             getUser();
@@ -46,7 +46,7 @@ export default function User(){
     }
 
     async function signUpWithEmail(){
-        const {data, error} = await supabase.auth.signUp({ email, password: pass});
+        const {error} = await supabase.auth.signUp({ email, password: pass});
         if(error) throw error
     }
 
