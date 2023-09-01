@@ -15,14 +15,15 @@ interface User{
     user_id: string,
     first_name: string,
     last_name:string,
-    friends:string[]
+    friends:string[],
+    pfp: string
 }
 
 export default function Chat(){
     const nav = useNavigate();
 
-    const [user, setUser] = useState<User>({id: -1, user_id: "", first_name: "", last_name: "", friends: []});
-    const [currentFriend, setFriend] = useState<User>({id: -1, user_id: "", first_name: "", last_name: "", friends: []});
+    const [user, setUser] = useState<User>({id: -1, user_id: "", first_name: "", last_name: "", friends: [], pfp: ""});
+    const [currentFriend, setFriend] = useState<User>({id: -1, user_id: "", first_name: "", last_name: "", friends: [], pfp: ""});
 
     const [chats, setChats] = useState<Chat[]>([]);
     const [friends, setFriends] = useState<User[]>([]);
@@ -112,7 +113,10 @@ export default function Chat(){
                     <ul className="divide-y-1 divide-slate-700">
                         {friends.map((friend:User) => (
                             <li className="text-xl flex justify-center px-2 py-1.5">
-                                <span className="flex flex-grow">{friend.first_name} {friend.last_name}</span>
+                                <div className="flex flex-grow">
+                                    <img src={friend.pfp} alt="This user's profile picture" className="w-8 h-8 rounded-full" />
+                                    <span>{friend.first_name} {friend.last_name}</span>
+                                </div>
                                 <button onClick={() => getChats(friend.user_id, true)} className="group rounded-full p-0.5 shadow-sm hover:shadow-md hover:shadow-green-400/25 hover:bg-zinc-700 hover:scale-110 transition-all duration-150 ease-in">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="transition-color h-6 w-6 delay-75 duration-150 ease-in group-hover:text-green-400">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
