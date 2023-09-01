@@ -1,14 +1,5 @@
 {
-    "rewirtes": [
-        {
-            "src": "/",
-            "dest": "/"
-        }, {
-            "src": "/chat",
-            "dest": "/"
-        }, {
-            "src": "/user",
-            "dest": "/"
-        }
-    ]
-}
+    "rewrites":  [
+        {"source": "/(.*)", "destination": "/"}
+     ]
+ }
