@@ -18,7 +18,7 @@ export default function App(){
   )
 }
 
-function Home<FC>(){
+function Home(){
   return(
     <Layout>
       <h1>Welcome!</h1>

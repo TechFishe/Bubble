@@ -18,7 +18,7 @@ interface User{
     friends:string[]
 }
 
-export default function Chat<FC>(){
+export default function Chat(){
     const nav = useNavigate();
 
     const [user, setUser] = useState<User>({id: -1, user_id: "", first_name: "", last_name: "", friends: []});

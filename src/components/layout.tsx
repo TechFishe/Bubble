@@ -1,4 +1,4 @@
-export default function<FC>({children}:any){
+export default function Layout({children}:any){
     return(
         <>
             <header className="z-40 grid h-16 w-screen grid-flow-col items-center rounded-b-lg bg-slate-800/95 px-3 py-1 backdrop-blur-[2px]">
@@ -40,7 +40,7 @@ interface Props{
     SVG: string
 }
 
-function NavBtn<FC>(props: Props){
+function NavBtn(props: Props){
     return(
         <a href={props.URL} className="flex px-5">
             <button className="group rounded-full p-1.5 shadow-sm transition-all duration-150 ease-in hover:scale-[1.075] hover:bg-zinc-700 hover:shadow-md hover:shadow-green-400/25">
