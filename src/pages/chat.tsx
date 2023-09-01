@@ -31,7 +31,6 @@ export default function Chat(){
     const [msg, setMsg] = useState("");
     const [uuid, setUuid] = useState("");
 
-    let tempUuid:string;
     let tempFriends:string[] = [];
   
     useEffect(() => {
@@ -41,26 +40,25 @@ export default function Chat(){
     async function getUser(){
         await supabase.auth.getUser().then((val) => {
             if(val.data?.user){
-                setCurrentUser();
-                tempUuid = val.data.user.id;
-                getTempFriends();
+                setCurrentUser(val.data.user.id);
+                getTempFriends(val.data.user.id);
             } else{
                 nav("/user");
             }
         });
     }
 
-    async function setCurrentUser(){
-        const {data, error} = await supabase.from("users").select().eq("user_id", tempUuid).single();
+    async function setCurrentUser(uuid:string){
+        const {data, error} = await supabase.from("users").select().eq("user_id", uuid).single();
         if(error) throw error;
         else setUser(data)
     }
 
-    async function getTempFriends() {
-        const {data, error} = await supabase.from("users").select("friends").eq("user_id", tempUuid).single();
+    async function getTempFriends(uuid:string) {
+        const {data, error} = await supabase.from("users").select("friends").eq("user_id", uuid).single();
         if(error) throw error;
         else{
-            setUuid(tempUuid);
+            setUuid(uuid);
             tempFriends = JSON.parse(JSON.stringify(data.friends))
             getFinalFriends();
         }
