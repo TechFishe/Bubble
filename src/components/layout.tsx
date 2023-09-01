@@ -28,7 +28,7 @@ export default function Layout({children}:any){
                 <footer className="mt-5 inline-block w-[97.5%] divide-x-1 border-t-2 border-slate-700 py-2.5 px-5">
                     <small className="select-none pr-2 italic text-green-400">Copyright &copy; TechFishe 2023</small>
                     <small className="px-2">Check us out on <a href="https://github.com/TechFishe/Bubble" target="_blank" rel="noopener noreferrer" className="underline transition-colors delay-75 duration-150 ease-in hover:text-orange-600">GitHub!</a></small>
-                    <small className="px-2">Personal site: <a href="https://techfishe.vercel.app" target="_blank" rel="noopener noreferrer" className="underline transition-colors delay-75 duration-150 ease-in hover:text-fuchsia-500">TechFishe.com</a></small>
+                    <!-- <small className="px-2">Personal site: <a href="https://techfishe.vercel.app" target="_blank" rel="noopener noreferrer" className="underline transition-colors delay-75 duration-150 ease-in hover:text-fuchsia-500">TechFishe.com</a></small> -->
                 </footer>
             </section>
         </>
