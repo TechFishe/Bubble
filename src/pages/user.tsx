@@ -4,15 +4,16 @@ import { supabase } from "../supabaseClient"
 
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import Layout from "../components/layout";
 
+import Layout from "../components/layout";
+import Loading from "../components/loading";
 
 import { createAvatar } from '@dicebear/core';
 import { micah } from '@dicebear/collection';
 
 export default function User(){
+    //#region Vars
     const nav = useNavigate();
-    const [user, setUser]:any = useState({});
     const [customUser, setCustomUser]:any = useState({});
 
     const [email, setEmail] = useState("");
@@ -22,7 +23,10 @@ export default function User(){
     const [lastName, setLastName] = useState("");
 
     const [newUser, setNewUser] = useState(false);
+    const [isLoading, setLoading] = useState(true);
+    //#endregion
 
+    //#region Functions
     supabase.auth.onAuthStateChange(async(event) => {
         if(event === "SIGNED_IN")
             nav("/chat");
@@ -34,10 +38,8 @@ export default function User(){
 
     async function getUser(){
         await supabase.auth.getUser().then((val) => {
-            if(val.data?.user){
-                setUser(val.data.user);
-                getCustomUser(val.data.user.id);
-            }
+            if(val.data?.user) getCustomUser(val.data.user.id);
+            else setLoading(false);
         });
     }
 
@@ -45,8 +47,8 @@ export default function User(){
         const {data, error} = await supabase.from("users").select().eq("user_id", uuid).single();
         if(error) throw error;
         else{
-            console.log(data); 
             setCustomUser(data);
+            setLoading(false);
         }
     }
 
@@ -72,8 +74,10 @@ export default function User(){
         if(error) throw error;
         else window.location.reload();
     }
+    //#endregion
 
-    if(Object.keys(user).length == 0){
+    //#region JSX
+    if(Object.keys(customUser).length === 0 && !isLoading){
         return(
             <Layout>
                 <main className="flex w-full h-fullScreen debug justify-center items-center">
@@ -122,7 +126,7 @@ export default function User(){
                 </main>
             </Layout>
         )
-    } else {
+    } else if(Object.keys(customUser).length !== 0 && !isLoading){
         return(
             <Layout>
                 <h1>Sucess</h1>
@@ -130,5 +134,14 @@ export default function User(){
                 <button onClick={() => logOut()}>Sign out</button>
             </Layout>
         )
+    } else if(Object.keys(customUser).length === 0 && isLoading){
+        return(
+            <Layout>
+                <main className="flex w-screen h-fullScreen justify-center items-center">
+                    <Loading />
+                </main>
+            </Layout>
+        )
     }
+    //#endregion
 }

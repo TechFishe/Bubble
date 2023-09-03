@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 import Layout from "../components/layout";
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/loading";
 
 interface Chat{
     id: number,
@@ -101,7 +102,7 @@ export default function Chat(){
             <div className="flex h-fullScreen">
                 <aside className="w-1/6 border-r-2 border-slate-50">
                     <section className="border-b-1 flex items-center">
-                        <h2 className="flex flex-grow text-5xl tracking-wider font-bold">Friends</h2>
+                        <h2 className="flex flex-grow">Friends</h2>
                         {/* <button className="flex w-fit h-fit mr-2 group rounded-full p-1.5 shadow-sm transition-all duration-150 ease-in hover:scale-[1.075] hover:bg-zinc-700 hover:shadow-md hover:shadow-green-400/25">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 transition-color delay-75 duration-150 ease-in group-hover:text-green-400">
                               <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75" />
@@ -109,19 +110,23 @@ export default function Chat(){
                         </button> */}
                     </section>
                     <ul className="divide-y-1 divide-slate-700">
-                        {friends.map((friend:User) => (
-                            <li className="text-xl flex justify-center px-2 py-1.5">
-                                <div className="flex flex-grow">
-                                    <img src={friend.pfp} alt="This user's profile picture" className="w-8 h-8 rounded-full" />
-                                    <span>{friend.first_name} {friend.last_name}</span>
-                                </div>
-                                <button onClick={() => getChats(friend.user_id, true)} className="group rounded-full p-0.5 shadow-sm hover:shadow-md hover:shadow-green-400/25 hover:bg-zinc-700 hover:scale-110 transition-all duration-150 ease-in">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="transition-color h-6 w-6 delay-75 duration-150 ease-in group-hover:text-green-400">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                                    </svg>
-                                </button>
-                            </li>
-                        ))}
+                        {friends.length === 0 ?
+                            <Loading />
+                        :
+                            friends.map((friend:User) => (
+                                <li className="text-xl flex justify-center items-center px-2 py-1.5">
+                                    <div className="flex flex-grow items-center">
+                                        <img src={friend.pfp} alt="This user's profile picture" className="w-8 h-8 rounded-full" />
+                                        <span>{friend.first_name} {friend.last_name}</span>
+                                    </div>
+                                    <button onClick={() => getChats(friend.user_id, true)} className="group rounded-full flex p-0.5 shadow-sm hover:shadow-md hover:shadow-green-400/25 hover:bg-zinc-700 hover:scale-110 transition-all duration-150 ease-in">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="transition-color h-6 w-6 delay-75 duration-150 ease-in group-hover:text-green-400">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                        </svg>
+                                    </button>
+                                </li>
+                            ))
+                        }
                     </ul>
                 </aside>
                 <main className="w-5/6 h-full flex flex-col">
