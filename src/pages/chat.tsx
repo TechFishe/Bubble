@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import Layout from "../components/layout";
+
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import Layout from "../components/layout";
 import Loading from "../components/loading";
 
 interface Chat{
@@ -21,6 +23,7 @@ interface User{
 }
 
 export default function Chat(){
+    //#region Vars
     const nav = useNavigate();
 
     const [user, setUser] = useState<User>({id: -1, user_id: "", first_name: "", last_name: "", friends: [], pfp: ""});
@@ -33,43 +36,45 @@ export default function Chat(){
     const [uuid, setUuid] = useState("");
 
     let tempFriends:string[] = [];
+    //#endregion
   
+    //#region Functions
     useEffect(() => {
+        async function getUser(){
+            await supabase.auth.getUser().then((val) => {
+                if(val.data?.user){
+                    setCurrentUser(val.data.user.id);
+                    getTempFriends(val.data.user.id);
+                } else{
+                    nav("/user");
+                }
+            });
+        }
+    
+        async function setCurrentUser(uuid:string){
+            const {data, error} = await supabase.from("users").select().eq("user_id", uuid).single();
+            if(error) throw error;
+            else setUser(data)
+        }
+    
+        async function getTempFriends(uuid:string) {
+            const {data, error} = await supabase.from("users").select("friends").eq("user_id", uuid).single();
+            if(error) throw error;
+            else{
+                setUuid(uuid);
+                tempFriends = JSON.parse(JSON.stringify(data.friends))
+                getFinalFriends();
+            }
+        }
+    
+        async function getFinalFriends() {
+            const {data, error} = await supabase.from("users").select().in("user_id", tempFriends);
+            if(error) throw error;
+            else setFriends(data)
+        }
+
         getUser();
     }, []);
-
-    async function getUser(){
-        await supabase.auth.getUser().then((val) => {
-            if(val.data?.user){
-                setCurrentUser(val.data.user.id);
-                getTempFriends(val.data.user.id);
-            } else{
-                nav("/user");
-            }
-        });
-    }
-
-    async function setCurrentUser(uuid:string){
-        const {data, error} = await supabase.from("users").select().eq("user_id", uuid).single();
-        if(error) throw error;
-        else setUser(data)
-    }
-
-    async function getTempFriends(uuid:string) {
-        const {data, error} = await supabase.from("users").select("friends").eq("user_id", uuid).single();
-        if(error) throw error;
-        else{
-            setUuid(uuid);
-            tempFriends = JSON.parse(JSON.stringify(data.friends))
-            getFinalFriends();
-        }
-    }
-
-    async function getFinalFriends() {
-        const {data, error} = await supabase.from("users").select().in("user_id", tempFriends);
-        if(error) throw error;
-        else setFriends(data)
-    }
 
     async function getChats(friendId:string, fromAside:boolean) {
         const tempArray:string[] = [uuid, friendId];
@@ -96,7 +101,9 @@ export default function Chat(){
             getChats(currentFriend.user_id, false)
         }
     }
+    //#endregion
 
+    //#region JSX
     return(
         <Layout>
             <div className="flex h-fullScreen">
@@ -159,4 +166,5 @@ export default function Chat(){
             </div>
         </Layout>
     )
+    //#endregion
 }

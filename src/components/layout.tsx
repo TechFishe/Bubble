@@ -17,6 +17,7 @@ export default function Layout({children}:any){
             if(error) throw error;
             else setCustomUser(data);
         }
+        
         getUser();
     }, [])
 
