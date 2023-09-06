@@ -13,7 +13,7 @@ import { micah } from '@dicebear/collection';
 
 export default function User(){
     //#region Vars
-    const nav = useNavigate();
+    // const nav = useNavigate();
     const [customUser, setCustomUser] = useState<User>({id: -1, user_id: "", full_name: "", friends: [], pfp: ""});
     const [friends, setFriends] = useState<User[]>([]);
 
@@ -93,11 +93,11 @@ export default function User(){
         if(error) throw error
     }
 
-    async function logOut(){
-        const {error} = await supabase.auth.signOut();
-        if(error) throw error;
-        else window.location.reload();
-    }
+    // async function logOut(){
+    //     const {error} = await supabase.auth.signOut();
+    //     if(error) throw error;
+    //     else window.location.reload();
+    // }
     //#endregion
 
     //#endregion
