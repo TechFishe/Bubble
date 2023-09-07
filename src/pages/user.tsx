@@ -30,10 +30,10 @@ export default function User(){
     //#endregion
 
     //#region Functions
-    supabase.auth.onAuthStateChange(async(event) => {
-        if(event === "SIGNED_IN")
-            window.location.reload();
-    })
+    // supabase.auth.onAuthStateChange(async(event) => {
+    //     if(event === "SIGNED_IN")
+    //         window.location.reload();
+    // })
 
     useEffect(() => {
         getUser();
