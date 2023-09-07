@@ -46,6 +46,7 @@ export default function User(){
                 getTempFriends(val.data.user.id)
             }
             else setLoading(false);
+            alert(val.data?.user)
         });
     }
 
