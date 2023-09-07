@@ -46,7 +46,7 @@ export default function User(){
                 getTempFriends(val.data.user.id)
             }
             else setLoading(false);
-            alert(val.data?.user)
+            // alert(val.data?.user)
         });
     }
 
@@ -102,7 +102,7 @@ export default function User(){
     //#endregion
 
     //#region JSX
-    if(Object.keys(customUser).length === 0 && !isLoading){
+    if(customUser.user_id === "" && !isLoading){
         return(
             <Layout>
                 <main className="flex w-full h-fullScreen justify-center items-center">
@@ -151,7 +151,7 @@ export default function User(){
                 </main>
             </Layout>
         )
-    } else if(Object.keys(customUser).length !== 0 && !isLoading){
+    } else if(customUser.user_id !== "" && !isLoading){
         return(
             <Layout>
                 <div className="flex w-screen">
@@ -205,7 +205,7 @@ export default function User(){
                 </div>
             </Layout>
         )
-    } else if(Object.keys(customUser).length === 0 && isLoading){
+    } else if(customUser.user_id === "" && isLoading){
         return(
             <Layout>
                 <main className="flex w-screen h-fullScreen justify-center items-center">
