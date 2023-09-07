@@ -30,10 +30,10 @@ export default function User(){
     //#endregion
 
     //#region Functions
-    // supabase.auth.onAuthStateChange(async(event) => {
-    //     if(event === "SIGNED_IN")
-    //         nav("/chat");
-    // })
+    supabase.auth.onAuthStateChange(async(event) => {
+        if(event === "SIGNED_IN")
+            window.location.reload();
+    })
 
     useEffect(() => {
         getUser();
@@ -46,7 +46,6 @@ export default function User(){
                 getTempFriends(val.data.user.id)
             }
             else setLoading(false);
-            // alert(val.data?.user)
         });
     }
 
