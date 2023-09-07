@@ -98,7 +98,7 @@ export default function Chat(){
     return(
         <Layout>
             <div className="flex h-fullScreen">
-                <aside className="w-1/6 border-r-2 border-slate-50">
+                <aside className="2xl:w-1/6 sm:w-1/3 w-0 border-r-2 border-slate-50">
                     <h2>Friends</h2>
                     <ul className="divide-y-1 divide-slate-700">
                         {friends.length === 0 ?
