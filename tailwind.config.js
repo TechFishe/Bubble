@@ -8,6 +8,9 @@ export default {
       },
       divideWidth: {
         1: "1px"
+      },
+      borderWidth: {
+        1: "1px"
       }
     },
   },

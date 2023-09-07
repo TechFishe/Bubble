@@ -13,6 +13,7 @@ html{
 h1,h2,h3,h4,h5,h6{ @apply font-mono; }
 h1{ @apply text-6xl tracking-wider font-extrabold; }
 h2{ @apply text-5xl tracking-wider font-extrabold; }
+h3{ @apply text-4xl tracking-wide font-bold; }
 
 input, button{ outline: none; }
 
