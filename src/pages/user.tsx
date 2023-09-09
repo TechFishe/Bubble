@@ -250,8 +250,31 @@ function Aside(props: Props){
     }
 
     async function addFriend(friendId:string){
-        const {error} = await supabase.from("users").update({...props.currentUser, friends: props.friends.push(friendId)}).eq("user_id", props.currentUser.user_id);
+        let tempArray = props.friends;
+        tempArray.push(friendId);
+        const {error} = await supabase.from("users").update({...props.currentUser, friends: tempArray}).eq("user_id", props.currentUser.user_id);
         if(error) throw error
+        else getFriendUser(friendId);
+    }
+
+    async function getFriendUser(friendId:string){
+        const {data, error} = await supabase.from("users").select().eq("user_id", friendId).single();
+        if(error) throw error;
+        else getFriendsForFriend(friendId, data);
+    }
+
+    async function getFriendsForFriend(friendId:string, friendUser:User) {
+        const {data, error} = await supabase.from("users").select("friends").eq("user_id", friendId).single();
+        if(error) throw error;
+        else addFriendTwo(friendId, friendUser, JSON.parse(JSON.stringify(data.friends)));
+    }
+
+    async function addFriendTwo(friendId:string, friendUser:User, friends:any[]) {
+        let tempArray = friends;
+        tempArray.push(props.currentUser.user_id);
+        const {error} = await supabase.from("users").update({...friendUser, friends: tempArray}).eq("user_id", friendId);
+        if(error) throw error;
+        else window.location.reload();
     }
 
     if(props.isSettings){
@@ -289,7 +312,7 @@ function Aside(props: Props){
                                         :
                                             <button onClick={() => addFriend(_friend.friend.user_id)} className="group rounded-full flex p-0.5 shadow-sm hover:shadow-md hover:shadow-green-400/25 hover:bg-zinc-700 hover:scale-110 transition-all duration-150 ease-in">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="transition-color h-6 w-6 delay-75 duration-150 ease-in group-hover:text-green-400">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                                                 </svg>
                                             </button>
                                         }
