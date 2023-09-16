@@ -1,4 +1,5 @@
 import { supabase } from "../supabaseClient"
+import { months } from "../months";
 
 // import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -12,7 +13,7 @@ import { micah } from '@dicebear/collection';
 export default function User(){
     //#region Vars
     // const nav = useNavigate();
-    const [customUser, setCustomUser] = useState<User>({id: -1, user_id: "", full_name: "", friends: [], pfp: ""});
+    const [customUser, setCustomUser] = useState<User>({id: -1, user_id: "", full_name: "", friends: [], pfp: "", date_joined: ""});
     const [friends, setFriends] = useState<User[]>([]);
 
     const [email, setEmail] = useState("");
@@ -27,6 +28,7 @@ export default function User(){
     const [isSettings, setSettings] = useState(false);
 
     let tempFriends:string[] = [];
+    let dateJoined:string;
     //#endregion
 
     //#region Functions
@@ -100,6 +102,13 @@ export default function User(){
 
     //#endregion
 
+    if(!isLoading){
+        const userDate:string[] = customUser.date_joined.split("-");
+        for(let i = 0; i < months.length; i++){
+            if(months[i].num === userDate[1]) dateJoined = `${months[i].name} ${userDate[2]}, ${userDate[0]}`;
+        }
+    }
+
     //#region JSX
     if(customUser.user_id === "" && !isLoading){
         return(
@@ -160,7 +169,10 @@ export default function User(){
                             <div className="flex flex-col">
                                 <article>
                                     <h2>{customUser.full_name}</h2>
-                                    <p className="text-lg">User since: <span className="text-green-400"></span></p>
+                                    <p className="text-lg">
+                                        <span>User since: </span>
+                                        <span className="text-green-400">{dateJoined}</span>
+                                        </p>
                                 </article>
                                 <section className="flex flex-grow items-center space-x-4 px-4">
                                     <button onClick={() => {setSettings(true); setFindingFriends(false);}} className="flex group rounded-full p-1.5 shadow-sm transition-all duration-150 ease-in hover:scale-[1.075] hover:bg-zinc-700 hover:shadow-md hover:shadow-green-400/25">
@@ -192,8 +204,10 @@ export default function User(){
                                 :
                                     friends.map((friend:User) => (
                                         <li className="text-xl flex justify-start items-center px-2 py-1.5">
-                                            <img src={friend.pfp} alt="This user's profile picture" className="w-8 h-8 rounded-full" />
-                                            <span>{friend.full_name}</span>
+                                            <img src={friend.pfp} alt="This user's profile picture" className="w-8 h-8" />
+                                            <a href="" className="hover:underline">
+                                                <span>{friend.full_name}</span>
+                                            </a>
                                         </li>
                                     ))
                                 }
@@ -300,7 +314,7 @@ function Aside(props: Props){
                         {possibleFriends.map((friend:User) => (
                             <li className="text-xl flex justify-center items-center px-2 py-1.5">
                                 <div className="flex flex-grow items-center">
-                                    <img src={friend.pfp} alt="This user's profile picture" className="w-8 h-8 rounded-full" />
+                                    <img src={friend.pfp} alt="This user's profile picture" className="w-8 h-8" />
                                     <span>{friend.full_name}</span>
                                 </div>
                                 {foundFriends.map((_friend:FriendList) => (

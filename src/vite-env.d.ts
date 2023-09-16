@@ -5,5 +5,11 @@ interface User{
     user_id: string,
     full_name: string,
     friends:string[],
-    pfp: string
+    pfp: string,
+    date_joined: string
+}
+
+interface Month{
+    name: string,
+    num: string
 }
