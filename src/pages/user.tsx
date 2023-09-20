@@ -28,7 +28,7 @@ export default function User(){
     const [isSettings, setSettings] = useState(false);
 
     let tempFriends:string[] = [];
-    let dateJoined:string;
+    let dateJoined = "";
     //#endregion
 
     //#region Functions
