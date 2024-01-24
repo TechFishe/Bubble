@@ -8,5 +8,11 @@ export default defineNuxtConfig({
       callback: '/confirm',
       exclude: ['/', '/signup'],
     }
+  },
+  runtimeConfig: {
+    public: {
+      supabaseUrl: '',
+      supabaseKey: ''
+    }
   }
 })
