@@ -77,7 +77,7 @@
 
 <template>
     <div class="flex h-fullscreen">
-        <aside class="xl:w-1/6 w-1/3 border-r-2 border-r-snow/45">
+        <aside class="lg:w-1/6 w-1/3 border-r-2 border-r-snow/45">
             <h2 class="text-5xl font-mono font-semibold">Friends</h2>
             <ul class="pl-2">
                 <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
@@ -91,7 +91,7 @@
                 </li>
             </ul>
         </aside>
-        <main v-if="currentFriend.full_name != ''" class="w-5/6 flex flex-col pb-2">
+        <main v-if="currentFriend.full_name != ''" class="lg:w-5/6 w-2/3 flex flex-col pb-2">
             <section class="w-screen flex h-16 items-center">
                 <img :src="currentFriend.pfp" alt="Friend pfp" width="48px" height="48px" />
                 <h1 class="text-6xl font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentFriend.full_name }}</h1>
