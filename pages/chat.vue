@@ -113,7 +113,7 @@
                 </button>
             </div>
         </main>
-        <main v-else id="noChats" class="w-5/6 flex flex-col justify-center items-center">
+        <main v-else id="noChats" class="xl:w-5/6 w-2/3 flex flex-col justify-center items-center">
             <h1 class="text-8xl uppercase font-mono font-black bg-clip-text border-b-[3px] border-b-snow/15 px-4 text-transparent bg-gradient-to-r from-snow to-65% to-aero-100">No friend picked</h1>
             <p class="text-2xl">Click the ">" next to one of your friends to chat with them!</p>
         </main>
