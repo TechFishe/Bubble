@@ -1,4 +1,8 @@
 <script setup lang="ts">
+    useHead({
+        title: "Bubble | User"
+    })
+    
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
 
