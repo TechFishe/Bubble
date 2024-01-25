@@ -8,7 +8,7 @@
   <main class="flex flex-col">
     <section class="h-fullscreen w-screen flex flex-col justify-center items-center">
       <h1 class="text-8xl uppercase font-mono font-black bg-clip-text border-b-[3px] border-b-snow/15 px-4 text-transparent bg-gradient-to-r from-snow to-65% to-aero-100">Welcome</h1>
-      <p class="text-2sxl">To the future of messages</p>
+      <p class="text-2xl">To the future of messages</p>
     </section>
   </main>
 </template>
