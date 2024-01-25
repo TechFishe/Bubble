@@ -1,4 +1,8 @@
 <script setup lang="ts">
+    useHead({
+        title: "Bubble | Home"
+    })
+    
     import { useAlertStore } from '~/stores/store';
 
     const supabase = useSupabaseClient();
