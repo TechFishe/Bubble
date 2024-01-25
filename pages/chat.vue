@@ -1,6 +1,6 @@
 <script setup lang="ts">
     useHead({
-        title: "Bubble | Home"
+        title: "Bubble | Chats"
     })
     
     import { useAlertStore } from '~/stores/store';
