@@ -1,4 +1,8 @@
 <script setup lang="ts">
+    useHead({
+        title: "Bubble | Sign up"
+    })
+    
     import { useAlertStore } from "~/stores/store";
     import { createAvatar } from '@dicebear/core';
     import { bottts } from '@dicebear/collection';
