@@ -77,7 +77,7 @@
 
 <template>
     <div class="flex h-fullscreen">
-        <aside class="lg:w-1/6 w-1/3 border-r-2 border-r-snow/45">
+        <aside class="xl:w-1/6 w-1/3 border-r-2 border-r-snow/45">
             <h2 class="text-5xl font-mono font-semibold">Friends</h2>
             <ul class="pl-2">
                 <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
