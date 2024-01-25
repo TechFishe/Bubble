@@ -4,10 +4,13 @@
     })
     
     import { useAlertStore } from '~/stores/store';
+    import type { RealtimeChannel } from '@supabase/supabase-js'
 
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
     const alertStore = useAlertStore();
+
+    let chatChannel: RealtimeChannel
 
     interface User{
         id: number,
@@ -31,18 +34,6 @@
     const chats: Ref<Chat[]> = ref([]);
 
     let msg = "";
-
-    onMounted(async () => {
-        if (!user.value) return;
-        
-        const { data: data1, error: error1 } = await supabase.from('users').select().eq('user_id', user.value.id).single();
-        if(error1) throw error1
-        else customUser.value = data1;
-
-        const { data: data2, error: error2 } = await supabase.from('users').select().in('user_id', customUser.value.friends);
-        if(error2) throw error2;
-        else friends.value = data2;
-    });
 
     async function setFriend(friendIn: User){
         currentFriend.value = friendIn;
@@ -73,6 +64,24 @@
         }
     }
 
+    onMounted(async () => {
+        if (!user.value) return;
+        
+        const { data: data1, error: error1 } = await supabase.from('users').select().eq('user_id', user.value.id).single();
+        if(error1) throw error1
+        else customUser.value = data1;
+
+        const { data: data2, error: error2 } = await supabase.from('users').select().in('user_id', customUser.value.friends);
+        if(error2) throw error2;
+        else friends.value = data2;
+
+        chatChannel = supabase.channel('public:chats').on('postgres_changes', { event: '*', schema: 'public', table: 'chats' }, () => getChats());
+        chatChannel.subscribe();
+    });
+
+    onUnmounted(() => {
+        supabase.removeChannel(chatChannel);
+    });
 </script>
 
 <template>
