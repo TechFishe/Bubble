@@ -1,3 +1,9 @@
+<script setup lang="ts">
+  useHead({
+    title: "Bubble | Home"
+  })
+</script>
+
 <template>
   <main class="flex flex-col">
     <section class="h-fullscreen w-screen flex flex-col justify-center items-center">
