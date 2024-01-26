@@ -39,10 +39,8 @@
     async function newUser(uuid: string){
         let avatar = createAvatar(bottts, { size: 64, seed: uuid }).toDataUriSync();
         let fullName = firstName.value + " " + lastName.value;
-        let todayDate = new Date();
-        let date = todayDate.getFullYear() + "-" + todayDate.getMonth() + "-" + todayDate.getDate();
         //@ts-expect-error
-        const { error } = await supabase.from('users').insert({ user_id: uuid, full_name: fullName, friends: [], pfp: avatar, date_joined: date });
+        const { error } = await supabase.from('users').insert({ user_id: uuid, full_name: fullName, friends: [], pfp: avatar });
         if(error) throw error;
         else navigateTo("/login");
     }
