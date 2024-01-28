@@ -1,16 +1,16 @@
 <script setup lang="ts">
     useHead({
         title: "Bubble | Chats"
-    })
+    });
     
     import { useAlertStore } from '~/stores/store';
-    import type { RealtimeChannel } from '@supabase/supabase-js'
+    import type { RealtimeChannel } from '@supabase/supabase-js';
 
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
     const alertStore = useAlertStore();
 
-    let chatChannel: RealtimeChannel
+    let chatChannel: RealtimeChannel;
 
     interface User{
         id: number,
@@ -47,6 +47,19 @@
         else chats.value = data;
     }
 
+    async function chatTableInsert(payload: any){
+        let sentBy: User;
+        const { data: data1, error: error1 } = await supabase.from("users").select().eq("user_id", payload.new.sent_by).single();
+        if(error1) throw error1;
+        else sentBy = data1;
+
+        if(sentBy.user_id === currentFriend.value.user_id) getChats();
+
+        if(Notification.permission === "granted"){
+            const notify = new Notification("New chat", { body: `You got a new message from ${sentBy.full_name}!` });
+        }
+    }
+
     async function sendChat(){
         if(msg === ""){
             alertStore.msg = "You need to enter text into the text box.";
@@ -75,8 +88,12 @@
         if(error2) throw error2;
         else friends.value = data2;
 
-        chatChannel = supabase.channel('public:chats').on('postgres_changes', { event: '*', schema: 'public', table: 'chats' }, () => getChats());
+        //@ts-expect-error
+        let msgFilter = `sent_to=eq.${data1.user_id}`;
+        chatChannel = supabase.channel('public:chats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chats', filter: msgFilter }, (payload) => chatTableInsert(payload)).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'chats', filter: msgFilter }, () => getChats());
         chatChannel.subscribe();
+
+        if(Notification.permission === "default") Notification.requestPermission();
     });
 
     onUnmounted(() => {
