@@ -3,7 +3,7 @@
         title: "Bubble | Sign up"
     })
     
-    import { useAlertStore } from "~/stores/store";
+    import { useAlertStore } from "#imports";
     import { createAvatar } from '@dicebear/core';
     import { bottts } from '@dicebear/collection';
 

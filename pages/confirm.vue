@@ -1,12 +1,16 @@
-<script setup lang="ts">
-    const user = useSupabaseUser()
-    watch(user, () => {
-      if (user.value) {
-        return navigateTo('/chat')
-      }
-    }, { immediate: true })
+<script setup>
+    const user = useSupabaseUser();
+    const supabase = useSupabaseClient();
+
+    watch(user, async () => {
+        if (user.value) {
+            return navigateTo('/chat');
+        }
+    }, { immediate: true });
 </script>
 
 <template>
-  <main>Waiting for login...</main>
+    <div>
+        loading. . .
+    </div>
 </template>

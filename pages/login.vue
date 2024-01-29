@@ -3,7 +3,7 @@
         title: "Bubble | Login"
     })
     
-    import { useAlertStore } from "~/stores/store";
+    import { useAlertStore } from "#imports";
 
     const supabase = useSupabaseClient();
     const alertStore = useAlertStore();

@@ -1,8 +1,7 @@
 <script setup lang="ts">
-
   useHead({
     title: "Bubble | Home"
-  })
+  });
 </script>
 
 <template>

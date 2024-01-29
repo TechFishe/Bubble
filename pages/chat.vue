@@ -3,14 +3,16 @@
         title: "Bubble | Chats"
     });
     
-    import { useAlertStore } from '~/stores/store';
+    import { useAlertStore } from '#imports';
+    import { useUserStore } from '#imports';
     import type { RealtimeChannel } from '@supabase/supabase-js';
 
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
     const alertStore = useAlertStore();
+    const userStore = useUserStore();
 
-    let chatChannel: RealtimeChannel;
+    let privateChatChannel: RealtimeChannel, groupChatChannel: RealtimeChannel;
 
     interface User{
         id: number,
@@ -28,104 +30,228 @@
         sent_to: string
     }
 
-    const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: ""});
-    const friends: Ref<User[]> = ref([]);
-    const currentFriend: Ref<User> = ref({ id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: ""});
+    interface Group{
+        id: number,
+        group_id: string,
+        members: string[],
+        group_name: string,
+        pfp: string
+    }
+
+    const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: "" });
+    const currentFriend: Ref<User> = ref({ id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: "" });
+    const currentGroup: Ref<Group> = ref({ id: 0, group_id: "", members: [], group_name: "", pfp: "" })
     const chats: Ref<Chat[]> = ref([]);
+    const friends: Ref<User[]> = ref([]);
+    const groups: Ref<Group[]> = ref([]);
+    const groupMembers: Ref<User[]> = ref([]);
 
-    let msg = "";
+    const msg = ref("");
 
-    async function setFriend(friendIn: User){
+    function setFriend(friendIn: User){
+        currentGroup.value = { id: 0, group_id: "", members: [], group_name: "", pfp: "" };
         currentFriend.value = friendIn;
-        getChats();
+        getChats(false);
     }
 
-    async function getChats(){
-        const tempArray:string[] = [customUser.value.user_id, currentFriend.value.user_id];
-        const {data, error} = await supabase.from("chats").select().in("sent_by", tempArray).in("sent_to", tempArray).order("id", { ascending: false });
+    async function setGroup(groupIn: Group){
+        currentFriend.value = { id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: "" };
+        currentGroup.value = groupIn;
+
+        const { data, error } = await supabase.from("users").select().in("user_id", groupIn.members);
         if(error) throw error;
-        else chats.value = data;
+        else groupMembers.value = data;
+
+        getChats(true);
     }
 
-    async function chatTableInsert(payload: any){
+    function checkId(sentBy: string){
+        for(let i = 0; i < groupMembers.value.length; i++){
+            if(sentBy === groupMembers.value[i].user_id) return groupMembers.value[i].full_name;
+        }
+    }
+
+    async function getChats(isGroup: boolean){
+        if(!isGroup){
+            const tempArray:string[] = [customUser.value.user_id, currentFriend.value.user_id];
+            const { data, error } = await supabase.from("private_chats").select().in("sent_by", tempArray).in("sent_to", tempArray).order("id", { ascending: false });
+
+            if(error) throw error;
+            //@ts-ignore
+            else chats.value = data;
+        } else{
+            const { data, error } = await supabase.from("group_chats").select().eq("sent_to", currentGroup.value.group_id).order("id", { ascending: false });
+
+            if(error) throw error;
+            //@ts-ignore
+            else chats.value = data;
+        }
+    }
+
+    async function privateChatTableInsert(payload: any){
         let sentBy: User;
         const { data: data1, error: error1 } = await supabase.from("users").select().eq("user_id", payload.new.sent_by).single();
         if(error1) throw error1;
         else sentBy = data1;
 
-        if(sentBy.user_id === currentFriend.value.user_id) getChats();
+        if(sentBy.user_id === currentFriend.value.user_id) getChats(false);
 
         if(Notification.permission === "granted"){
             const notify = new Notification("New chat", { body: `You got a new message from ${sentBy.full_name}!` });
         }
     }
 
+    async function groupChatTableInsert(payload: any){
+        let sentBy: User;
+        const { data: data1, error: error1 } = await supabase.from("users").select().eq("user_id", payload.new.sent_by).single();
+        if(error1) throw error1;
+        else sentBy = data1;
+
+        for(let i = 0; i < groupMembers.value.length; i++){
+            if(sentBy.user_id === groupMembers.value[i].user_id){
+                getChats(true);
+                break;
+            }
+        }
+
+        if(Notification.permission === "granted" && sentBy.user_id != customUser.value.user_id){
+            const notify = new Notification("New chat", { body: `You got a new message from ${sentBy.full_name} in ${currentGroup.value.group_name} group chat!` });
+        }
+    }
+
     async function sendChat(){
-        if(msg === ""){
+        if(msg.value === ""){
             alertStore.msg = "You need to enter text into the text box.";
             alertStore.type = "error";
             alertStore.timesShown++;
             return;
         }
 
-        //@ts-expect-error
-        const { error } = await supabase.from("chats").insert({ msg: msg, sent_by: customUser.value.user_id, sent_to: currentFriend.value.user_id });
-        if(error) throw error;
-        else{
-            msg = "";
-            getChats();
+        if(currentFriend.value.id != 0){
+            //@ts-expect-error
+            const { error } = await supabase.from("private_chats").insert({ msg: msg.value, sent_by: customUser.value.user_id, sent_to: currentFriend.value.user_id });
+
+            if(error) throw error;
+            else{
+                msg.value = "";
+                getChats(false);
+            }
+        } else{
+            //@ts-expect-error
+            const { error } = await supabase.from("group_chats").insert({ msg: msg.value, sent_by: customUser.value.user_id, sent_to: currentGroup.value.group_id });
+
+            if(error) throw error;
+            else{
+                msg.value = "";
+                getChats(true);
+            }
         }
     }
 
     onMounted(async () => {
         if (!user.value) return;
         
+        let groupIds: string[] = [];
+
         const { data: data1, error: error1 } = await supabase.from('users').select().eq('user_id', user.value.id).single();
         if(error1) throw error1
         else customUser.value = data1;
+
+        //@ts-expect-error
+        userStore.id = data1.id; userStore.user_id = data1.user_id; userStore.full_name = data1.full_name; userStore.friends = data1.friends; userStore.pfp = data1.pfp; userStore.date_joined = data1.date_joined;
 
         const { data: data2, error: error2 } = await supabase.from('users').select().in('user_id', customUser.value.friends);
         if(error2) throw error2;
         else friends.value = data2;
 
+        const { data: data3, error: error3 } = await supabase.from("groups").select();
+        if(error3) throw error3;
+        else{
+            let groupsIn: number[] = [];
+
+            for(let i = 0; i < data3.length; i++){
+                //@ts-expect-error
+                for(let m = 0; m < data3[i].members.length; m++){
+                    //@ts-expect-error
+                    if(data3[i].members[m] === customUser.value.user_id){
+                        //@ts-expect-error
+                        groupsIn.push(data3[i].id); groupIds.push(data3[i].group_id);
+                        break;
+                    }
+                }
+            }
+
+            const { data: data4, error: error4 } = await supabase.from("groups").select().in("id", groupsIn);
+            if(error4) throw error4;
+            else groups.value = data4;
+        }
+
         //@ts-expect-error
-        let msgFilter = `sent_to=eq.${data1.user_id}`;
-        chatChannel = supabase.channel('public:chats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chats', filter: msgFilter }, (payload) => chatTableInsert(payload)).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'chats', filter: msgFilter }, () => getChats());
-        chatChannel.subscribe();
+        let privateMsgFilter = `sent_to=eq.${data1.user_id}`, groupMsgFilter = `sent_to=in.(${groupIds.toString().replace(",", ", ")})`;
+        privateChatChannel = supabase.channel('public:private_chats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'private_chats', filter: privateMsgFilter }, (payload) => privateChatTableInsert(payload)).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'private_chats', filter: privateMsgFilter }, () => getChats(false));
+        groupChatChannel = supabase.channel('public:group_chats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'group_chats', filter: groupMsgFilter }, (payload) => groupChatTableInsert(payload)).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'group_chats', filter: groupMsgFilter }, () => getChats(true));
+        privateChatChannel.subscribe();
+        groupChatChannel.subscribe();
 
         if(Notification.permission === "default") Notification.requestPermission();
     });
 
     onUnmounted(() => {
-        supabase.removeChannel(chatChannel);
+        supabase.removeChannel(privateChatChannel);
+        supabase.removeChannel(groupChatChannel);
     });
 </script>
 
 <template>
     <div class="flex h-fullscreen">
-        <aside class="2xl:w-1/6 w-3/12 border-r-2 border-r-snow/45">
-            <h2 class="text-5xl font-mono font-semibold">Friends</h2>
-            <ul class="pl-2">
-                <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
-                    <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
-                    <span class="text-xl text-aero-100 flex flex-grow h-fit">{{ friend.full_name }}</span>
-                    <button @click="setFriend(friend)" class="hover:text-aero-200 transition-colors duration-200 ease-in">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                        </svg>
-                    </button>
-                </li>
-            </ul>
+        <aside class="2xl:w-1/6 w-3/12 border-r-2 border-r-snow/45 flex h-fullscreen flex-col">
+            <article class="h-2/3">
+                <h2 class="text-5xl font-mono font-semibold">Friends</h2>
+                <ul class="pl-2">
+                    <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
+                        <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
+                        <span class="text-xl text-aero-100 flex flex-grow h-fit ml-1">{{ friend.full_name }}</span>
+                        <button @click="setFriend(friend)" class="hover:text-aero-200 transition-colors duration-200 ease-in">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </button>
+                    </li>
+                </ul>
+            </article>
+            <article class="h-1/3 border-t border-t-snow/45">
+                <h2 class="text-5xl font-mono font-semibold">Groups</h2>
+                <ul class="pl-2">
+                    <li v-for="group in groups" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
+                        <img :src="group.pfp" alt="Group pfp" width="24px" height="24px" />
+                        <span class="text-xl text-aero-100 flex flex-grow h-fit ml-1">{{ group.group_name }}</span>
+                        <button @click="setGroup(group)" class="hover:text-aero-200 transition-colors duration-200 ease-in">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                            </svg>
+                        </button>
+                    </li>
+                </ul>
+            </article>
         </aside>
-        <main v-if="currentFriend.full_name != ''" class="2xl:w-5/6 w-9/12 flex flex-col pb-2">
-            <section class="w-screen flex h-16 items-center">
+        <main v-if="currentFriend.full_name != '' || currentGroup.group_name != ''" class="2xl:w-5/6 w-9/12 flex flex-col pb-2">
+            <section v-if="currentFriend.full_name != ''" class="w-screen flex h-16 items-center">
                 <img :src="currentFriend.pfp" alt="Friend pfp" width="48px" height="48px" />
-                <h1 class="text-6xl font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentFriend.full_name }}</h1>
+                <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentFriend.full_name }}</h1>
+            </section>
+            <section v-else class="w-screen flex h-16 items-center">
+                <img :src="currentGroup.pfp" alt="Friend pfp" width="48px" height="48px" />
+                <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentGroup.group_name }}</h1>
             </section>
             <ul id="chatbox" class="ml-2 pb-2 overflow-y-scroll max-h-chatView flex w-screen flex-col-reverse">
-                <li v-for="chat in chats" class="flex space-x-2">
+                <li v-if="currentFriend.full_name != ''" v-for="chat in chats" class="flex space-x-2">
                     <p v-if="chat.sent_by === currentFriend.user_id"><span class="text-sky-300">{{ currentFriend.full_name }}</span>:</p>
                     <p v-else-if="chat.sent_by === customUser.user_id"><span class="text-aero-300">{{ customUser.full_name }}</span>:</p>
+                    <p>{{ chat.msg }}</p>
+                </li>
+                <li v-else v-for="chat in chats" class="flex space-x-2">
+                    <p v-if="chat.sent_by != customUser.user_id"><span class="text-sky-300">{{ checkId(chat.sent_by) }}</span>:</p>
+                    <p v-else><span class="text-aero-300">{{ customUser.full_name }}</span>:</p>
                     <p>{{ chat.msg }}</p>
                 </li>
             </ul>

@@ -1,42 +1,25 @@
 <script setup lang="ts">
-  import { useAlertStore } from '~/stores/store';
-
-  interface User{
-    id: number,
-    user_id: string,
-    full_name: string,
-    friends:string[],
-    pfp: string,
-    date_joined: string
-  }
-
-  const user = useSupabaseUser();
-  const supabase = useSupabaseClient();
+  import { useAlertStore } from '#imports'; 
+  import { useUserStore } from '#imports';
 
   const showAlert = ref(false);
   const loggedIn = ref(false);
-  const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: ""});
-
-  watch(user, async () => {
-    if (user.value) {
-      loggedIn.value = !loggedIn.value;
-      if(!loggedIn) return;
-
-      const { data, error } = await supabase.from('users').select().eq('user_id', user.value.id).single();
-      if(error) throw error;
-
-      customUser.value = data;
-    }
-  }, { immediate: true })
 
   const alertStore = useAlertStore();
+  const userStore = useUserStore();
+
   alertStore.$subscribe(newAlert, { detached: true});
+  userStore.$subscribe(changeIcon, { detached: true} );
 
   function newAlert(){
     showAlert.value = true;
     setTimeout(() => {
       showAlert.value = false;
     }, 5000)
+  }
+
+  function changeIcon(){
+    loggedIn.value = !loggedIn.value;
   }
 </script>
 
@@ -76,7 +59,7 @@
             </svg>
           </NuxtLink>
           <NuxtLink v-else to="/user" class="ml-1.5">
-            <img :src="customUser.pfp" alt="User pfp" width="40px" height="40px" />
+            <img :src="userStore.pfp" alt="User pfp" width="40px" height="40px" />
           </NuxtLink>
         </nav>
         <article v-if="showAlert" :class="{'bg-red-400': alertStore.type === 'error', 'bg-amber-400': alertStore.type === 'warn'}" class="absolute w-1/6 rounded-b-md top-24 h-10 right-1/2 left-1/2 -translate-x-1/2">

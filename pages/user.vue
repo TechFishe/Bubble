@@ -1,10 +1,15 @@
 <script setup lang="ts">
     useHead({
         title: "Bubble | User"
-    })
+    });
     
+    import { useUserStore } from '#imports';
+    import { createAvatar } from '@dicebear/core';
+    import { identicon } from '@dicebear/collection';
+
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
+    const userStore = useUserStore();
 
     interface User{
         id: number,
@@ -30,7 +35,10 @@
 
         const { error } = await supabase.auth.signOut();
         if(error) throw error;
-        reloadNuxtApp();
+        else{
+            userStore.$reset();
+            reloadNuxtApp();
+        }
     }
 </script>
 
