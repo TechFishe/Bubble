@@ -257,7 +257,7 @@
                 <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentGroup.group_name }}</h1>
             </section>
             <ul id="chatbox" class="ml-2 pb-2 overflow-y-scroll max-h-chatView flex w-screen flex-col-reverse">
-                <li v-if="currentFriend.full_name != ''" v-for="chat in chats" class="flex space-x-2 max-w-[81%] group">
+                <li v-if="currentFriend.full_name != ''" v-for="chat in chats" class="flex space-x-2 max-w-[61%] group">
                     <p v-if="chat.sent_by === currentFriend.user_id"><span class="text-sky-300">{{ currentFriend.full_name }}</span>:</p>
                     <p v-else-if="chat.sent_by === customUser.user_id"><span class="text-aero-300">{{ customUser.full_name }}</span>:</p>
                     <p>{{ chat.msg }}</p>
@@ -268,7 +268,7 @@
                         </svg>
                     </button>
                 </li>
-                <li v-else v-for="chat in chats" class="flex space-x-2 max-w-[81%] group">
+                <li v-else v-for="chat in chats" class="flex space-x-2 max-w-[61%] group">
                     <p v-if="chat.sent_by != customUser.user_id"><span class="text-sky-300">{{ checkId(chat.sent_by) }}</span>:</p>
                     <p v-else><span class="text-aero-300">{{ customUser.full_name }}</span>:</p>
                     <p>{{ chat.msg }}</p>
