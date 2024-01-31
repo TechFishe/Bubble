@@ -268,7 +268,7 @@
                 <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentGroup.group_name }}</h1>
             </section>
             <ul id="chatbox" class="ml-2 pb-2 overflow-y-scroll max-h-chatView flex w-screen flex-col-reverse">
-                <li v-if="currentFriend.full_name != ''" v-for="chat in chats" class="flex space-x-2 hover:bg-shark-900 w-fit group rounded-md py-px px-2">
+                <li v-if="currentFriend.full_name != ''" v-for="chat in chats" class="flex space-x-2 hover:bg-shark-900 w-fit group rounded-md py-px pr-2 transition-all duration-100 ease-out delay-100">
                     <p v-if="chat.sent_by === currentFriend.user_id"><span class="text-sky-300">{{ currentFriend.full_name }}</span>:</p>
                     <p v-else-if="chat.sent_by === customUser.user_id"><span class="text-aero-300">{{ customUser.full_name }}</span>:</p>
                     <p>{{ chat.msg }}</p>
