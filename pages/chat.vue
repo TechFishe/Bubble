@@ -259,11 +259,11 @@
             </article>
         </aside>
         <main v-if="currentFriend.full_name != '' || currentGroup.group_name != ''" class="2xl:w-5/6 w-9/12 flex flex-col pb-2">
-            <section v-if="currentFriend.full_name != ''" class="w-screen flex h-16 items-center">
+            <section v-if="currentFriend.full_name != ''" class="w-screen ml-1 flex h-16 items-center">
                 <img :src="currentFriend.pfp" alt="Friend pfp" width="48px" height="48px" />
                 <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentFriend.full_name }}</h1>
             </section>
-            <section v-else class="w-screen flex h-16 items-center">
+            <section v-else class="w-screen flex h-16 items-center ml-1">
                 <img :src="currentGroup.pfp" alt="Friend pfp" width="48px" height="48px" />
                 <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentGroup.group_name }}</h1>
             </section>
