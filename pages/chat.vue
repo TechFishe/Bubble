@@ -223,15 +223,15 @@
     <div class="flex h-fullscreen">
         <aside class="2xl:w-1/6 w-3/12 border-r-2 border-r-snow/45 flex h-fullscreen flex-col">
             <article class="h-2/3">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between mx-1">
                     <h2 class="text-5xl font-mono font-semibold">Friends</h2>
-                    <NuxtLink>
+                    <NuxtLink class="hover:text-aero-200 transition-colors duration-200 ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                         </svg>
                     </NuxtLink>
                 </div>
-                <ul class="pl-2">
+                <ul class="pl-2 overflow-y-scroll">
                     <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
                         <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
                         <span class="text-xl text-aero-100 flex flex-grow h-fit ml-1">{{ friend.full_name }}</span>
@@ -244,8 +244,15 @@
                 </ul>
             </article>
             <article class="h-1/3 border-t border-t-snow/45">
-                <h2 class="text-5xl font-mono font-semibold">Groups</h2>
-                <ul class="pl-2">
+                <div class="flex items-center justify-between mx-1">
+                    <h2 class="text-5xl font-mono font-semibold">Groups</h2>
+                    <NuxtLink class="hover:text-aero-200 transition-colors duration-200 ease-in">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </NuxtLink>
+                </div>
+                <ul class="pl-2 overflow-y-scroll">
                     <li v-for="group in groups" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
                         <img :src="group.pfp" alt="Group pfp" width="24px" height="24px" />
                         <span class="text-xl text-aero-100 flex flex-grow h-fit ml-1">{{ group.group_name }}</span>
