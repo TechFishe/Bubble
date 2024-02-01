@@ -67,7 +67,7 @@
                     </section>
                 </section>
                 <section class="space-x-4 w-full justify-center flex mt-4">
-                    <button @click="signUp" :disabled="email === '' || pass === '' || confirmPass === '' || firstName === '' || lastName === ''" class="border border-snow/85 px-4 py-1 disabled:cursor-not-allowed disabled:opacity-60 rounded-md text-xl enabled:hover:text-aero-400 enabled:hover:border-aero-200/85 enabled:hover:drop-shadow-[0_4px_3px_rgba(158,252,207,0.1)] transition-all duration-200 ease-out">Next</button>
+                    <button @click="nextPage" :disabled="email === '' || pass === '' || confirmPass === '' || firstName === '' || lastName === ''" class="border border-snow/85 px-4 py-1 disabled:cursor-not-allowed disabled:opacity-60 rounded-md text-xl enabled:hover:text-aero-400 enabled:hover:border-aero-200/85 enabled:hover:drop-shadow-[0_4px_3px_rgba(158,252,207,0.1)] transition-all duration-200 ease-out">Next</button>
                     <NuxtLink to="/login" class="border border-snow/85 px-4 py-1 rounded-md text-xl hover:text-red-400 hover:border-red-200/85 hover:drop-shadow-[0_4px_3px_rgba(254,202,202,0.1)] transition-all duration-200 ease-out">Back</NuxtLink>
                 </section>
             </div>
