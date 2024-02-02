@@ -86,7 +86,7 @@
 
 <template>
     <main class="flex w-screen h-fullscreen justify-center items-center">
-        <div class="flex flex-col bg-shark-950 rounded-lg items-center w-1/2 px-2 py-2 space-y-2">
+        <div class="flex flex-col bg-shark-950 rounded-lg items-center 2xl:w-1/2 md:w-2/3 px-2 py-2 space-y-2">
             <h1 class="text-7xl uppercase font-mono font-black bg-clip-text border-b-[3px] border-b-snow/15 px-4 text-transparent bg-gradient-to-r from-snow to-65% to-aero-100">Add Friend</h1>
             <div class="bg-shark-900 rounded-sm h-8 flex space-x-1 w-1/2 items-center pr-2">
                 <input type="search" placeholder="Search" class="w-full bg-shark-900 text-lg pl-2 placeholder:italic outline-0" />
