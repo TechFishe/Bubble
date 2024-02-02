@@ -104,6 +104,13 @@
         getFriendIds();
     }
 
+    async function setFriend(friendIn: User){
+        const { data, error } = await supabase.from("users").select().eq("user_id", friendIn.user_id).single();
+        if(error) throw error;
+
+        currentFriend.value = data;
+    }
+
     onMounted(async () => {
         async function getUser(){
             if(!user.value) return;
