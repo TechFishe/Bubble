@@ -112,6 +112,13 @@
         chats.value = data;
     }
 
+    async function sendChat(){
+        const { error } = await supabase.from("private_chats").insert({ msg: msg.value, sent_by: customUser.value.user_id, sent_to: currentFriend.value.user_id });
+        if(error) throw error;
+
+        getChats();
+    }
+
     async function setFriend(friendIn: User){
         const { data, error } = await supabase.from("users").select().eq("user_id", friendIn.user_id).single();
         if(error) throw error;
