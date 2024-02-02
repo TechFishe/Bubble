@@ -6,7 +6,6 @@
     import { useAlertStore } from '#imports';
     import { useUserStore } from '#imports';
     import type { RealtimeChannel } from '@supabase/supabase-js';
-import { compileScript } from 'vue/compiler-sfc';
 
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
