@@ -12,7 +12,7 @@
     const alertStore = useAlertStore();
     const userStore = useUserStore();
 
-    let privateChatChannel: RealtimeChannel, groupChatChannel: RealtimeChannel, friendsChannel: RealtimeChannel;
+    let privateChatChannel: RealtimeChannel, groupChatChannel: RealtimeChannel, friendsChannel: RealtimeChannel, notifyChannel: RealtimeChannel;
 
     interface User{
         id: number,
@@ -116,6 +116,7 @@
         const { error } = await supabase.from("private_chats").insert({ msg: msg.value, sent_by: customUser.value.user_id, sent_to: currentFriend.value.user_id });
         if(error) throw error;
 
+        msg.value = "";
         getChats();
     }
 
@@ -137,6 +138,10 @@
             customUser.value = data;
             //@ts-ignore
             userStore.id = data.id; userStore.user_id = data.user_id; userStore.full_name = data.full_name; userStore.pfp = data.pfp; userStore.joined_at = data.joined_at; userStore.username = data.username; userStore.birthday = data.birthday;
+        }
+
+        function getChannels(){
+            
         }
 
         getUser();
