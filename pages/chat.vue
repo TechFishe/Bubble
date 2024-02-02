@@ -200,7 +200,7 @@
         <main v-if="currentFriend.full_name != '' || currentGroup.group_name != ''" class="w-3/4 flex flex-col pb-2">
             <section v-if="currentFriend.full_name != ''" class="w-screen ml-1 flex h-16 items-center">
                 <img :src="currentFriend.pfp" alt="Friend pfp" width="48px" height="48px" />
-                <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentFriend.full_name }}</h1>
+                <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentFriend.username }}</h1>
             </section>
             <section v-else class="w-screen flex h-16 items-center ml-1">
                 <img :src="currentGroup.pfp" alt="Friend pfp" width="48px" height="48px" />
@@ -208,8 +208,8 @@
             </section>
             <ul id="noScrollbar" class="ml-2 pb-2 overflow-y-scroll max-h-chatView flex w-screen flex-col-reverse">
                 <li v-if="currentFriend.full_name != ''" v-for="chat in chats" class="flex space-x-2 hover:bg-shark-900 hover:cursor-default w-fit group rounded-md py-px px-2 transition-all duration-100 ease-out">
-                    <p v-if="chat.sent_by === currentFriend.user_id"><span class="text-sky-300">{{ currentFriend.full_name }}</span>:</p>
-                    <p v-else-if="chat.sent_by === customUser.user_id"><span class="text-aero-300">{{ customUser.full_name }}</span>:</p>
+                    <p v-if="chat.sent_by === currentFriend.user_id"><span class="text-sky-300">{{ currentFriend.username }}</span>:</p>
+                    <p v-else-if="chat.sent_by === customUser.user_id"><span class="text-aero-300">You</span>:</p>
                     <p class="text-wrap">{{ chat.msg }}</p>
                     <section class="hidden group-hover:flex">
                         <button @click="copyChat(chat)" class="hover:text-aero-200 transition-colors duration-200 ease-in">
@@ -226,7 +226,7 @@
                 </li>
                 <li v-else v-for="chat in chats" class="flex space-x-2 hover:bg-shark-900 hover:cursor-default w-fit group rounded-md py-px px-2 transition-all duration-100 ease-out">
                     <p v-if="chat.sent_by != customUser.user_id"><span class="text-sky-300">{{ checkId(chat.sent_by) }}</span>:</p>
-                    <p v-else><span class="text-aero-300">{{ customUser.full_name }}</span>:</p>
+                    <p v-else><span class="text-aero-300">You</span>:</p>
                     <p class="text-wrap">{{ chat.msg }}</p>
                     <section class="hidden group-hover:flex">
                         <button @click="copyChat(chat)" class="hover:text-aero-200 transition-colors duration-200 ease-in">
