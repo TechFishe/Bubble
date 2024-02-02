@@ -104,11 +104,20 @@
         getFriendIds();
     }
 
+    async function getChats(){
+        let filterArray: string[] = [customUser.value.user_id, currentFriend.value.user_id];
+        const { data, error } = await supabase.from("private_chats").select().in("sent_to", filterArray).in("sent_by", filterArray);
+        if(error) throw error;
+
+        chats.value = data;
+    }
+
     async function setFriend(friendIn: User){
         const { data, error } = await supabase.from("users").select().eq("user_id", friendIn.user_id).single();
         if(error) throw error;
 
         currentFriend.value = data;
+        getChats();
     }
 
     onMounted(async () => {
