@@ -16,9 +16,10 @@ export const useUserStore = defineStore('userStore', {
             id: 0,
             user_id: "",
             full_name: "",
-            friends: [],
             pfp: "",
-            date_joined: ""
+            joined_at: "",
+            username: "",
+            birthday: ""
         }
     }
 });

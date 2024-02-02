@@ -68,7 +68,7 @@
             <img :src="userStore.pfp" alt="User pfp" width="40px" height="40px" />
           </NuxtLink>
         </nav>
-        <article v-if="showAlert" :class="{'bg-red-400': alertStore.type === 'error', 'bg-amber-400': alertStore.type === 'warn'}" class="absolute w-1/6 rounded-b-md top-24 h-10 right-1/2 left-1/2 -translate-x-1/2">
+        <article v-if="showAlert" :class="{'bg-red-400': alertStore.type === 'error', 'bg-amber-400': alertStore.type === 'warn', 'bg-aero-400': alertStore.type === 'ok'}" class="absolute w-1/6 rounded-b-md top-24 h-10 right-1/2 left-1/2 -translate-x-1/2">
           <p class="w-full text-center">{{ alertStore.msg }}</p>
         </article>
       </header>

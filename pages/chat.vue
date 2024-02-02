@@ -6,26 +6,29 @@
     import { useAlertStore } from '#imports';
     import { useUserStore } from '#imports';
     import type { RealtimeChannel } from '@supabase/supabase-js';
+import { compileScript } from 'vue/compiler-sfc';
 
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
     const alertStore = useAlertStore();
     const userStore = useUserStore();
 
-    let privateChatChannel: RealtimeChannel, groupChatChannel: RealtimeChannel;
+    let privateChatChannel: RealtimeChannel, groupChatChannel: RealtimeChannel, friendsChannel: RealtimeChannel;
 
     interface User{
         id: number,
         user_id: string,
         full_name: string,
-        friends:string[],
         pfp: string,
-        date_joined: string
+        joined_at: string,
+        username: string,
+        birthday: string
     }
 
     interface Chat{
         id: number,
         msg: string,
+        created_at: string,
         sent_by: string,
         sent_to: string
     }
@@ -33,205 +36,128 @@
     interface Group{
         id: number,
         group_id: string,
-        members: string[],
+        created_at: string,
         group_name: string,
         pfp: string
     }
 
-    const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: "" });
-    const currentFriend: Ref<User> = ref({ id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: "" });
-    const currentGroup: Ref<Group> = ref({ id: 0, group_id: "", members: [], group_name: "", pfp: "" })
+    const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", pfp: "", joined_at: "", username: "", birthday: "" });
+    const currentGroup: Ref<Group> = ref({ id: 0, group_id: "", created_at: "", group_name: "", pfp: "" })
     const chats: Ref<Chat[]> = ref([]);
-    const friends: Ref<User[]> = ref([]);
     const groups: Ref<Group[]> = ref([]);
     const groupMembers: Ref<User[]> = ref([]);
 
+    const currentFriend: Ref<User> = ref({ id: 0, user_id: "", full_name: "", pfp: "", joined_at: "", username: "", birthday: "" });
+    const friends: Ref<User[]> = ref([]);
+    const friendRequests: Ref<User[]> = ref([]);
+
     const msg = ref("");
 
-    function setFriend(friendIn: User){
-        currentGroup.value = { id: 0, group_id: "", members: [], group_name: "", pfp: "" };
-        currentFriend.value = friendIn;
-        getChats(false);
+    async function getFriendIds(){
+        if(!user.value) return;
+
+        const { data: data1, error: error1 } = await supabase.from("friends").select().eq("user_1", user.value.id);
+        if(error1) throw error1;
+
+        const { data: data2, error: error2 } = await supabase.from("friends").select().eq("user_2", user.value.id);
+        if(error2) throw error2;
+
+        let friendIds: string[] = [], requestIds: string[] = [];
+        for(let i = 0; i < data1.length; i++){
+            //@ts-expect-error
+            let tempId = data1[i].user_2;
+            friendIds.push(tempId);
+        }
+        for(let i = 0; i < data2.length; i++){
+            //@ts-expect-error
+            let tempId = data2[i].user_1;
+            //@ts-expect-error
+            if(!data2[i].user_2_allow) requestIds.push(tempId);
+            else friendIds.push(tempId);
+        }
+
+        getFinalFriends(friendIds, requestIds);
     }
 
-    async function setGroup(groupIn: Group){
-        currentFriend.value = { id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: "" };
-        currentGroup.value = groupIn;
+    async function getFinalFriends(friendIds: string[], requestIds: string[]){
+        const { data: data1, error: error1 } = await supabase.from("users").select().in("user_id", friendIds);
+        if(error1) throw error1;
 
-        const { data, error } = await supabase.from("users").select().in("user_id", groupIn.members);
+        const { data: data2, error: error2 } = await supabase.from("users").select().in("user_id", requestIds);
+        if(error2) throw error2;
+        
+        friends.value = data1;
+        friendRequests.value = data2;
+    }
+
+    async function allowFriend(requestIn: User){
+        //@ts-expect-error
+        const { error } = await supabase.from("friends").update({ user_2_allow: true }).eq("user_1", requestIn.user_id).eq("user_2", customUser.value.user_id);
         if(error) throw error;
-        else groupMembers.value = data;
 
-        getChats(true);
+        getFriendIds();
     }
 
-    function checkId(sentBy: string){
-        for(let i = 0; i < groupMembers.value.length; i++){
-            if(sentBy === groupMembers.value[i].user_id) return groupMembers.value[i].full_name;
-        }
-    }
+    async function rejectFriend(requestIn: User){
+        const { error } = await supabase.from("friends").delete().eq("user_1", requestIn.user_id).eq("user_2", customUser.value.user_id);
+        if(error) throw error;
 
-    function copyChat(chatIn: Chat){
-        navigator.clipboard.writeText(chatIn.msg);
-    }
-
-    async function getChats(isGroup: boolean){
-        if(!isGroup){
-            const tempArray:string[] = [customUser.value.user_id, currentFriend.value.user_id];
-            const { data, error } = await supabase.from("private_chats").select().in("sent_by", tempArray).in("sent_to", tempArray).order("id", { ascending: false });
-
-            if(error) throw error;
-            //@ts-ignore
-            else chats.value = data;
-        } else{
-            const { data, error } = await supabase.from("group_chats").select().eq("sent_to", currentGroup.value.group_id).order("id", { ascending: false });
-
-            if(error) throw error;
-            //@ts-ignore
-            else chats.value = data;
-        }
-    }
-
-    async function privateChatTableInsert(payload: any){
-        let sentBy: User;
-        const { data: data1, error: error1 } = await supabase.from("users").select().eq("user_id", payload.new.sent_by).single();
-        if(error1) throw error1;
-        else sentBy = data1;
-
-        if(sentBy.user_id === currentFriend.value.user_id) getChats(false);
-
-        if(Notification.permission === "granted"){
-            const notify = new Notification("New chat", { body: `You got a new message from ${sentBy.full_name}!` });
-        }
-    }
-
-    async function groupChatTableInsert(payload: any){
-        let sentBy: User;
-        const { data: data1, error: error1 } = await supabase.from("users").select().eq("user_id", payload.new.sent_by).single();
-        if(error1) throw error1;
-        else sentBy = data1;
-
-        for(let i = 0; i < groupMembers.value.length; i++){
-            if(sentBy.user_id === groupMembers.value[i].user_id){
-                getChats(true);
-                break;
-            }
-        }
-
-        if(Notification.permission === "granted" && sentBy.user_id != customUser.value.user_id){
-            const notify = new Notification("New chat", { body: `You got a new message from ${sentBy.full_name} in ${currentGroup.value.group_name} group chat!` });
-        }
-    }
-
-    async function sendChat(){
-        if(msg.value === ""){
-            alertStore.msg = "You need to enter text into the text box.";
-            alertStore.type = "error";
-            alertStore.timesShown++;
-            return;
-        }
-
-        if(currentFriend.value.id != 0){
-            //@ts-expect-error
-            const { error } = await supabase.from("private_chats").insert({ msg: msg.value, sent_by: customUser.value.user_id, sent_to: currentFriend.value.user_id });
-
-            if(error) throw error;
-            else{
-                msg.value = "";
-                getChats(false);
-            }
-        } else{
-            //@ts-expect-error
-            const { error } = await supabase.from("group_chats").insert({ msg: msg.value, sent_by: customUser.value.user_id, sent_to: currentGroup.value.group_id });
-
-            if(error) throw error;
-            else{
-                msg.value = "";
-                getChats(true);
-            }
-        }
-    }
-
-    
-    async function deleteChat(chatIn: Chat){
-        if(currentFriend.value.id != 0){
-            const { error } = await supabase.from("private_chats").delete().eq("id", chatIn.id);
-            if(error) throw error;
-            else getChats(false);
-        } else{
-            const { error } = await supabase.from("group_chats").delete().eq("id", chatIn.id);
-            if(error) throw error;
-            else getChats(true);
-        }
+        getFriendIds();
     }
 
     onMounted(async () => {
-        if (!user.value) return;
-        
-        let groupIds: string[] = [];
+        async function getUser(){
+            if(!user.value) return;
 
-        const { data: data1, error: error1 } = await supabase.from('users').select().eq('user_id', user.value.id).single();
-        if(error1) throw error1
-        else customUser.value = data1;
-
-        //@ts-expect-error
-        userStore.id = data1.id; userStore.user_id = data1.user_id; userStore.full_name = data1.full_name; userStore.friends = data1.friends; userStore.pfp = data1.pfp; userStore.date_joined = data1.date_joined;
-
-        const { data: data2, error: error2 } = await supabase.from('users').select().in('user_id', customUser.value.friends);
-        if(error2) throw error2;
-        else friends.value = data2;
-
-        const { data: data3, error: error3 } = await supabase.from("groups").select();
-        if(error3) throw error3;
-        else{
-            let groupsIn: number[] = [];
-
-            for(let i = 0; i < data3.length; i++){
-                //@ts-expect-error
-                for(let m = 0; m < data3[i].members.length; m++){
-                    //@ts-expect-error
-                    if(data3[i].members[m] === customUser.value.user_id){
-                        //@ts-expect-error
-                        groupsIn.push(data3[i].id); groupIds.push(data3[i].group_id);
-                        break;
-                    }
-                }
-            }
-
-            const { data: data4, error: error4 } = await supabase.from("groups").select().in("id", groupsIn);
-            if(error4) throw error4;
-            else groups.value = data4;
+            const { data, error } = await supabase.from("users").select().eq("user_id", user.value.id).single();
+            if(error) throw error;
+            
+            customUser.value = data;
+            //@ts-ignore
+            userStore.id = data.id; userStore.user_id = data.user_id; userStore.full_name = data.full_name; userStore.pfp = data.pfp; userStore.joined_at = data.joined_at; userStore.username = data.username; userStore.birthday = data.birthday;
         }
 
-        //@ts-expect-error
-        let privateMsgFilter = `sent_to=eq.${data1.user_id}`, groupMsgFilter = `sent_to=in.(${groupIds.toString().replace(",", ", ")})`;
-        privateChatChannel = supabase.channel('public:private_chats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'private_chats', filter: privateMsgFilter }, (payload) => privateChatTableInsert(payload)).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'private_chats', filter: privateMsgFilter }, () => getChats(false));
-        groupChatChannel = supabase.channel('public:group_chats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'group_chats', filter: groupMsgFilter }, (payload) => groupChatTableInsert(payload)).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'group_chats', filter: groupMsgFilter }, () => getChats(true));
-        privateChatChannel.subscribe();
-        groupChatChannel.subscribe();
-
-        if(Notification.permission === "default") Notification.requestPermission();
-    });
-
-    onUnmounted(() => {
-        supabase.removeChannel(privateChatChannel);
-        supabase.removeChannel(groupChatChannel);
+        getUser();
+        getFriendIds();
     });
 </script>
 
 <template>
     <div class="flex h-fullscreen">
-        <aside class="2xl:w-1/6 w-3/12 border-r-2 border-r-snow/45 flex h-fullscreen flex-col">
+        <aside class="2xl:w-1/4 w-1/3 border-r-2 border-r-snow/45 flex h-fullscreen flex-col">
             <article class="h-2/3">
                 <div class="flex items-center justify-between mx-1">
                     <h2 class="text-5xl font-mono font-semibold">Friends</h2>
-                    <NuxtLink class="hover:text-aero-200 transition-colors duration-200 ease-in">
+                    <NuxtLink to="/add-friend" class="hover:text-aero-200 transition-colors duration-200 ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                         </svg>
                     </NuxtLink>
                 </div>
-                <ul class="pl-2 overflow-y-scroll">
+                <ul v-if="friendRequests.length !== 0" class="mx-1 space-x-1">
+                    <li v-for="request in friendRequests" class="bg-shark-900 rounded-md w-fit py-0.5 px-1 flex">
+                        <div class="flex flex-col">
+                            <section class="flex items-center">
+                                <img :src="request.pfp" alt="Request pfp" width="32px" height="32px" />
+                                <span class="text-xl flex flex-grow h-fit ml-1">{{ request.full_name }}</span>
+                            </section>
+                            <p class="text-sm tracking-tight text-snow/75 italic">Wants to be friends with you!</p>
+                        </div>
+                        <div class="ml-1 flex flex-col space-y-1 justify-center">
+                            <button @click="allowFriend(request)" class="hover:text-aero-400 transition-colors duration-200 ease-in">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                                </svg>
+                            </button>
+                            <button @click="rejectFriend(request)" class="hover:text-red-400 transition-colors duration-200 ease-in">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+                    </li>
+                </ul>
+                <ul id="noScrollbar" class="pl-2 overflow-y-scroll">
                     <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
                         <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
                         <span class="text-xl flex flex-grow h-fit ml-1">{{ friend.full_name }}</span>
@@ -252,7 +178,7 @@
                         </svg>
                     </NuxtLink>
                 </div>
-                <ul class="pl-2 overflow-y-scroll">
+                <ul id="noScrollbar" class="pl-2 overflow-y-scroll">
                     <li v-for="group in groups" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
                         <img :src="group.pfp" alt="Group pfp" width="24px" height="24px" />
                         <span class="text-xl flex flex-grow h-fit ml-1">{{ group.group_name }}</span>
@@ -265,7 +191,7 @@
                 </ul>
             </article>
         </aside>
-        <main v-if="currentFriend.full_name != '' || currentGroup.group_name != ''" class="2xl:w-5/6 w-9/12 flex flex-col pb-2">
+        <main v-if="currentFriend.full_name != '' || currentGroup.group_name != ''" class="2xl:w-1/4 w-2/3 flex flex-col pb-2">
             <section v-if="currentFriend.full_name != ''" class="w-screen ml-1 flex h-16 items-center">
                 <img :src="currentFriend.pfp" alt="Friend pfp" width="48px" height="48px" />
                 <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentFriend.full_name }}</h1>
@@ -274,7 +200,7 @@
                 <img :src="currentGroup.pfp" alt="Friend pfp" width="48px" height="48px" />
                 <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentGroup.group_name }}</h1>
             </section>
-            <ul id="chatbox" class="ml-2 pb-2 overflow-y-scroll max-h-chatView flex w-screen flex-col-reverse">
+            <ul id="noScrollbar" class="ml-2 pb-2 overflow-y-scroll max-h-chatView flex w-screen flex-col-reverse">
                 <li v-if="currentFriend.full_name != ''" v-for="chat in chats" class="flex space-x-2 hover:bg-shark-900 hover:cursor-default w-fit group rounded-md py-px px-2 transition-all duration-100 ease-out">
                     <p v-if="chat.sent_by === currentFriend.user_id"><span class="text-sky-300">{{ currentFriend.full_name }}</span>:</p>
                     <p v-else-if="chat.sent_by === customUser.user_id"><span class="text-aero-300">{{ customUser.full_name }}</span>:</p>
@@ -328,8 +254,8 @@
 </template>
 
 <style scoped>
-    #chatbox::-webkit-scrollbar{
-        background: transparent;
+    #noScrollbar::-webkit-scrollbar{
+        display: none;
     }
 
     #noChats{

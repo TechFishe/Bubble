@@ -4,8 +4,6 @@
     });
     
     import { useUserStore } from '#imports';
-    import { createAvatar } from '@dicebear/core';
-    import { identicon } from '@dicebear/collection';
 
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
@@ -15,12 +13,13 @@
         id: number,
         user_id: string,
         full_name: string,
-        friends:string[],
         pfp: string,
-        date_joined: string
+        joined_at: string,
+        username: string,
+        birthday: string
     }
 
-    const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", friends: [], pfp: "", date_joined: ""});
+    const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", pfp: "", joined_at: "", username: "", birthday: "" });
 
     onMounted(async () => {
         if(!user.value) return;

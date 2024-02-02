@@ -33,7 +33,7 @@
                 <input v-model="pass" type="password" placeholder="Password" class="w-full bg-shark-900 text-lg rounded-sm pl-2 h-8 placeholder:italic outline-0" />
             </section>
             <p class="my-1">New to Bubble? Click <NuxtLink to="/signup" class="underline hover:text-aero-200 transition-colors duration-100 ease-linear">here</NuxtLink> to sign up!</p>
-            <button @keypress.enter="logInWithEmail" @click="logInWithEmail" :disabled="email === '' || pass === ''" class="border border-snow/85 px-4 py-1 rounded-md text-xl disabled:cursor-not-allowed disabled:opacity-60 enabled:hover:text-aero-400 enabled:hover:border-aero-200/85 enabled:hover:drop-shadow-[0_4px_3px_rgba(158,252,207,0.1)] transition-all duration-200 ease-out">Login</button>
+            <button @click="logInWithEmail" :disabled="email === '' || pass === ''" class="border border-snow/85 px-4 py-1 rounded-md text-xl disabled:cursor-not-allowed disabled:opacity-60 enabled:hover:text-aero-400 enabled:hover:border-aero-200/85 enabled:hover:drop-shadow-[0_4px_3px_rgba(158,252,207,0.1)] transition-all duration-200 ease-out">Login</button>
         </div>
     </main>
 </template>
