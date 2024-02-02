@@ -135,7 +135,7 @@ import { compileScript } from 'vue/compiler-sfc';
                     </NuxtLink>
                 </div>
                 <ul v-if="friendRequests.length !== 0" class="mx-1 space-x-1 flex w-full overflow-x-scroll">
-                    <li v-for="request in friendRequests" class="bg-shark-900 rounded-md h-16 w-full py-0.5 px-1 flex">
+                    <li v-for="request in friendRequests" class="bg-shark-900 rounded-md h-16 whitespace-nowrap	 w-full py-0.5 px-1 flex">
                         <div class="flex flex-col">
                             <section class="flex items-center">
                                 <img :src="request.pfp" alt="Request pfp" width="32px" height="32px" />
