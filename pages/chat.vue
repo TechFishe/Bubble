@@ -139,7 +139,7 @@ import { compileScript } from 'vue/compiler-sfc';
                         <div class="flex flex-col">
                             <section class="flex items-center">
                                 <img :src="request.pfp" alt="Request pfp" width="32px" height="32px" />
-                                <span class="text-xl flex flex-grow h-fit ml-1">{{ request.full_name }}</span>
+                                <span class="text-xl flex flex-grow h-fit ml-1">{{ request.username }}</span>
                             </section>
                             <p class="text-sm tracking-tight text-snow/75 italic">Wants to be friends with you!</p>
                         </div>
@@ -160,7 +160,7 @@ import { compileScript } from 'vue/compiler-sfc';
                 <ul id="noScrollbar" class="pl-2 overflow-y-scroll">
                     <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
                         <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
-                        <span class="text-xl flex flex-grow h-fit ml-1">{{ friend.full_name }}</span>
+                        <span class="text-xl flex flex-grow h-fit ml-1">{{ friend.username }}</span>
                         <button @click="setFriend(friend)" class="hover:text-aero-200 transition-colors duration-200 ease-in">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
