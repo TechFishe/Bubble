@@ -134,7 +134,7 @@ import { compileScript } from 'vue/compiler-sfc';
                         </svg>
                     </NuxtLink>
                 </div>
-                <ul v-if="friendRequests.length !== 0" class="mx-1 -z-10 space-x-1 flex w-full overflow-x-scroll">
+                <ul v-if="friendRequests.length !== 0" class="px-1 space-x-1 flex w-full overflow-x-scroll">
                     <li v-for="request in friendRequests" class="bg-shark-900 rounded-md h-16 whitespace-nowrap w-full py-0.5 px-1 flex">
                         <div class="flex flex-col">
                             <section class="flex items-center">
