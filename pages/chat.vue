@@ -106,7 +106,7 @@
 
     async function getChats(){
         let filterArray: string[] = [customUser.value.user_id, currentFriend.value.user_id];
-        const { data, error } = await supabase.from("private_chats").select().in("sent_to", filterArray).in("sent_by", filterArray);
+        const { data, error } = await supabase.from("private_chats").select().in("sent_to", filterArray).in("sent_by", filterArray).order("id", { ascending: false });
         if(error) throw error;
 
         chats.value = data;
