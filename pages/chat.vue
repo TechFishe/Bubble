@@ -124,7 +124,7 @@ import { compileScript } from 'vue/compiler-sfc';
 
 <template>
     <div class="flex h-fullscreen">
-        <aside class="2xl:w-1/4 w-1/3 border-r-2 border-r-snow/45 flex h-fullscreen flex-col">
+        <aside class="w-1/4 border-r-2 border-r-snow/45 flex h-fullscreen flex-col">
             <article class="h-2/3">
                 <div class="flex items-center justify-between mx-1">
                     <h2 class="text-5xl font-mono font-semibold">Friends</h2>
@@ -191,7 +191,7 @@ import { compileScript } from 'vue/compiler-sfc';
                 </ul>
             </article>
         </aside>
-        <main v-if="currentFriend.full_name != '' || currentGroup.group_name != ''" class="2xl:w-1/4 w-2/3 flex flex-col pb-2">
+        <main v-if="currentFriend.full_name != '' || currentGroup.group_name != ''" class="w-3/4 flex flex-col pb-2">
             <section v-if="currentFriend.full_name != ''" class="w-screen ml-1 flex h-16 items-center">
                 <img :src="currentFriend.pfp" alt="Friend pfp" width="48px" height="48px" />
                 <h1 class="text-6xl ml-1 font-mono font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit">{{ currentFriend.full_name }}</h1>
