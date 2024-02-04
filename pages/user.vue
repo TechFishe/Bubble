@@ -2,8 +2,6 @@
     useHead({
         title: "Bubble | User"
     });
-    
-    import { useUserStore } from '#imports';
 
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();

@@ -3,7 +3,6 @@
         title: "Bubble | Add Friend"
     });
 
-    import { useAlertStore } from '#imports';
     import type { RealtimeChannel } from '@supabase/supabase-js';
 
     const supabase = useSupabaseClient();

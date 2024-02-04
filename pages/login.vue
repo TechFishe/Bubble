@@ -1,9 +1,7 @@
 <script setup lang="ts">
     useHead({
         title: "Bubble | Login"
-    })
-    
-    import { useAlertStore } from "#imports";
+    });
 
     const supabase = useSupabaseClient();
     const alertStore = useAlertStore();
