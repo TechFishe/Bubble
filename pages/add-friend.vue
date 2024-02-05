@@ -9,7 +9,7 @@
     const user = useSupabaseUser();
     const alertStore = useAlertStore();
 
-    let userChannel: RealtimeChannel, friendChannel: RealtimeChannel;
+    let friendChannel: RealtimeChannel;
 
     interface User{
         id: number,
@@ -67,18 +67,13 @@
         alertStore.timesShown++;
     }
 
-    onMounted(async () => {
-        function connectChannels(){
-            userChannel = supabase.channel("public:users").on("postgres_changes", { event: "*", schema: "public", table: "users" }, () => getList()).subscribe();
-            friendChannel = supabase.channel("public:friends").on("postgres_changes", { event: "*", schema: "public", table: "friends" }, () => getList()).subscribe();
-        }
-
+    onMounted(() => {
         getList();
-        connectChannels();
+        
+        friendChannel = supabase.channel("public:friends").on("postgres_changes", { event: "*", schema: "public", table: "friends" }, () => getList()).subscribe();
     });
 
     onUnmounted(() => {
-        supabase.removeChannel(userChannel);
         supabase.removeChannel(friendChannel);
     });
 </script>

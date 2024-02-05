@@ -29,6 +29,8 @@
         pfp: string
     }
 
+    import type { RealtimeChannel } from '@supabase/supabase-js';
+
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
 
@@ -39,6 +41,8 @@
     const friend: Ref<User> = ref({ id: 0, user_id: "", full_name: "", pfp: "", joined_at: "", username: "", birthday: "" });
     const chats: Ref<Chat[]> = ref([]);
     const isFriend = ref(true);
+
+    let privateChatChannel: RealtimeChannel;
 
     async function getChats(){
         if(!user.value) return;
@@ -95,8 +99,32 @@
         else getFriend();
     }
 
+    async function privateChatTableInsert(payload: any){
+        let sentBy: User;
+        const { data: data1, error: error1 } = await supabase.from("users").select().eq("user_id", payload.new.sent_by).single();
+        if(error1) throw error1;
+        else sentBy = data1;
+
+        if(sentBy.user_id === friend.value.user_id) getChats();
+    }
+
     onMounted(() => {
+        function getChannels(){
+            if(!user.value) return;
+
+            let privateMsgFilter = `sent_to=eq.${user.value.id}`;
+            privateChatChannel = supabase.channel('public:private_chats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'private_chats', filter: privateMsgFilter }, (payload) => privateChatTableInsert(payload)).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'private_chats', filter: privateMsgFilter }, () => getChats());
+            // groupChatChannel = supabase.channel('public:group_chats').on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'group_chats', filter: groupMsgFilter }, (payload) => groupChatTableInsert(payload)).on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'group_chats', filter: groupMsgFilter }, () => getChats(true));
+            privateChatChannel.subscribe();
+            // groupChatChannel.subscribe();
+        }
+
         checkFriend();
+        getChannels();
+    });
+
+    onUnmounted(() => {
+        supabase.removeChannel(privateChatChannel);
     });
 </script>
 
