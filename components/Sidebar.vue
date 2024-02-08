@@ -172,7 +172,7 @@
         <article class="h-1/3 border-t border-t-snow/45">
             <div class="flex items-center justify-between mx-1">
                 <h2 class="text-5xl font-mono font-semibold">Groups</h2>
-                <NuxtLink class="hover:text-aero-200 transition-colors duration-200 ease-in">
+                <NuxtLink to="/new-group" class="hover:text-aero-200 transition-colors duration-200 ease-in">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
