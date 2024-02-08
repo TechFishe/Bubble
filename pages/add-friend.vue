@@ -3,13 +3,9 @@
         title: "Bubble | Add Friend"
     });
 
-    import type { RealtimeChannel } from '@supabase/supabase-js';
-
     const supabase = useSupabaseClient();
     const user = useSupabaseUser();
     const alertStore = useAlertStore();
-
-    let friendChannel: RealtimeChannel;
 
     interface User{
         id: number,
@@ -48,7 +44,6 @@
         for(let i = 0; i < friendIds.value.length; i++) tempFilter.push(friendIds.value[i]);
         let filter = `(${tempFilter.toString()})`;
 
-
         const { data, error } = await supabase.from("users").select().neq("user_id", user.value.id).not("user_id", "in", filter).limit(20);
         if(error) throw error;
 
@@ -65,16 +60,12 @@
         alertStore.msg = "Friend request sent!";
         alertStore.type = "ok";
         alertStore.timesShown++;
+
+        getList();
     }
 
     onMounted(() => {
         getList();
-        
-        friendChannel = supabase.channel("public:friends").on("postgres_changes", { event: "*", schema: "public", table: "friends" }, () => getList()).subscribe();
-    });
-
-    onUnmounted(() => {
-        supabase.removeChannel(friendChannel);
     });
 </script>
 
