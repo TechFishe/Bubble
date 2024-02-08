@@ -32,7 +32,7 @@
     const friendRequests: Ref<User[]> = ref([]);
 
     const groups: Ref<Group[]> = ref([]);
-    //const groupMembers: Ref<User[]> = ref([]);
+    const groupRequests: Ref<Group[]> = ref([]);
 
     async function getFriendIds(){
         if(!user.value) return;
@@ -60,6 +60,22 @@
         getFinalFriends(friendIds, requestIds);
     }
 
+    async function getGroupIds(){
+        if(!user.value) return;
+
+        const { data, error } = await supabase.from("group_members").select().eq("user_id", user.value.id);
+        if(error) throw error;
+
+        let groupIds: string[] = [], requestIds: string[] = [];
+        for(let i = 0; i < data.length; i++){
+            //@ts-expect-error
+            let tempId = data[i].group_id;
+            //@ts-expect-error
+            if(!data[i].accepted) requestIds.push(tempId);
+            else groupIds.push(tempId);
+        }
+    }
+
     async function getFinalFriends(friendIds: string[], requestIds: string[]){
         const { data: data1, error: error1 } = await supabase.from("users").select().in("user_id", friendIds);
         if(error1) throw error1;
@@ -69,6 +85,17 @@
         
         friends.value = data1;
         friendRequests.value = data2;
+    }
+
+    async function getFinalGroups(groupIds: string[] = [], requestIds: string[] = []){
+        const { data: data1, error: error1 } = await supabase.from("groups").select().in("group_id", groupIds);
+        if(error1) throw error1;
+
+        const { data: data2, error: error2 } = await supabase.from("groups").select().in("group_id", requestIds);
+        if(error2) throw error2;
+        
+        groups.value = data1;
+        groupRequests.value = data2;
     }
 
     async function allowFriend(requestIn: User){
@@ -92,6 +119,7 @@
 
     onMounted(() => {
         getFriendIds();
+        getGroupIds();
     });
 </script>
 
@@ -150,6 +178,29 @@
                     </svg>
                 </NuxtLink>
             </div>
+            <ul id="noScrollbar" v-if="groupRequests.length !== 0" class="px-1 space-x-1 flex w-full overflow-x-scroll mb-1">
+                <li v-for="request in groupRequests" class="bg-shark-900 rounded-md h-16 whitespace-nowrap w-fit py-0.5 px-1 flex">
+                    <div class="flex flex-col">
+                        <section class="flex items-center">
+                            <img :src="request.pfp" alt="Request pfp" width="32px" height="32px" />
+                            <span class="text-xl flex flex-grow h-fit ml-1">{{ request.group_name }}</span>
+                        </section>
+                        <p class="text-sm tracking-tight text-snow/75 italic">Wants you to join!</p>
+                    </div>
+                    <div class="ml-1 flex flex-col space-y-1 justify-center">
+                        <button class="hover:text-aero-400 transition-colors duration-200 ease-in">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                        </button>
+                        <button class="hover:text-red-400 transition-colors duration-200 ease-in">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                </li>
+            </ul>
             <ul id="noScrollbar" class="pl-2 overflow-y-scroll">
                 <li v-for="group in groups" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
                     <img :src="group.pfp" alt="Group pfp" width="24px" height="24px" />
