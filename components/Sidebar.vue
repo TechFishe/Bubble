@@ -120,6 +120,25 @@
         getFriendIds();
     }
 
+    async function allowGroup(requestIn: Group){
+        if(!user.value) return
+
+        //@ts-expect-error
+        const { error } = await supabase.from("group_members").update({ accepted: true }).eq("user_id", user.value.id).eq("group_id", requestIn.group_id);
+        if(error) throw error;
+
+        getGroupIds();
+    }
+
+    async function rejectGroup(requestIn: Group){
+        if(!user.value) return;
+
+        const { error } = await supabase.from("group_members").delete().eq("user_id", user.value.id).eq("group_id", requestIn.group_id);
+        if(error) throw error;
+
+        getGroupIds();
+    }
+
     onMounted(() => {
         getFriendIds();
         getGroupIds();
