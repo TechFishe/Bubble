@@ -65,6 +65,22 @@
     async function getMembers(){
         const { data: data1, error: error1 } = await supabase.from("group_members").select().eq("group_id", route.params.id);
         if(error1) throw error1;
+
+        let filter: string[] = [];
+        for(let i = 0; i < data1.length; i++){
+            filter.push(data1[i].user_id);
+        }
+
+        const { data: data2, error: error2 } = await supabase.from("users").select().in("user_id", filter);
+        if(error2) throw error2;
+
+        members.value = data2;
+    }
+
+    function checkId(chatIn: Chat){
+        for(let i = 0; i < members.value.length; i++){
+            if(chatIn.sent_by === members.value[i].user_id) return members.value[i].username
+        }
     }
 
     async function getGroup(){
@@ -102,7 +118,7 @@
             <ul id="noScrollbar" class="ml-2 pb-2 overflow-y-scroll max-h-chatView flex w-screen flex-col-reverse">
                 <li v-for="chat in chats" class="flex space-x-2 hover:bg-shark-900 hover:cursor-default w-fit group rounded-md py-px px-2 transition-all duration-100 ease-out">
                     <p v-if="chat.sent_by === user?.id"><span class="text-aero-300">You</span>:</p>
-                    <p v-else><span class="text-sky-300">anyone else</span>:</p>
+                    <p v-else><span class="text-sky-300">{{ checkId(chat) }}</span>:</p>
                     <p class="text-wrap">{{ chat.msg }}</p>
                     <section class="hidden group-hover:flex">
                         <button @click="copyChat(chat)" class="hover:text-aero-200 transition-colors duration-200 ease-in">
