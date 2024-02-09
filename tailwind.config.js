@@ -15,7 +15,7 @@ export default {
       },
       maxHeight: {
         'fullscreen': 'calc(100vh - 6rem)',
-        'chatView': 'calc(100vh - 12.5rem)'
+        'chatView': 'calc(100vh - 14rem)'
       },
       colors: {
         'snow': '#FFF9F9',

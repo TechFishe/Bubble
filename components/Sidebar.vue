@@ -22,7 +22,8 @@
         group_id: string,
         created_at: string,
         group_name: string,
-        pfp: string
+        pfp: string,
+        created_by: string
     }
 
     const supabase = useSupabaseClient();
@@ -74,6 +75,8 @@
             if(!data[i].accepted) requestIds.push(tempId);
             else groupIds.push(tempId);
         }
+
+        getFinalGroups(groupIds, requestIds);
     }
 
     async function getFinalFriends(friendIds: string[], requestIds: string[]){
@@ -87,7 +90,7 @@
         friendRequests.value = data2;
     }
 
-    async function getFinalGroups(groupIds: string[] = [], requestIds: string[] = []){
+    async function getFinalGroups(groupIds: string[], requestIds: string[]){
         const { data: data1, error: error1 } = await supabase.from("groups").select().in("group_id", groupIds);
         if(error1) throw error1;
 

@@ -25,7 +25,7 @@
 
 <template>
   <div id="screen" class="bg-shark-950 text-snow overflow-x-hidden min-h-screen">
-      <header id="top" class="h-24 border-b-2 border-b-snow/45 bg-shark-950 flex w-screen px-4">
+      <header id="top" class="h-24 border-b-2 border-b-snow/45 bg-shark-950 flex w-screen px-8">
         <section class="flex items-center">
           <span class="text-6xl font-mono tracking-tight font-bold h-fit hidden md:flex">Bubble</span>
           <div class="flex max-h-fit md:-ml-2">
