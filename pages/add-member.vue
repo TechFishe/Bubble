@@ -2,6 +2,13 @@
   useHead({
     title: "Bubble | Add Member"
   });
+
+  const supabase = useSupabaseClient();
+  const user = useSupabaseUser();
+
+  onMounted(async () => {
+    
+  });
 </script>
 
 <template>
