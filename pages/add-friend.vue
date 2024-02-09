@@ -82,7 +82,7 @@
             <ul class="w-full grid grid-cols-4 grid-rows-5">
                 <li v-for="user in list" class="flex items-center px-1 py-0.5 border-r border-r-snow/45 last:border-r-transparent">
                     <img :src="user.pfp" alt="Friend pfp" width="32px" height="32px" />
-                    <span class="text-xl flex flex-grow h-fit ml-1">{{ user.full_name }}</span>
+                    <span class="text-xl flex flex-grow h-fit ml-1">{{ user.username }}</span>
                     <button @click="addFriend(user)" class="hover:text-aero-200 transition-colors duration-200 ease-in">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
