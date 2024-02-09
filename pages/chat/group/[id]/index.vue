@@ -48,7 +48,6 @@ s<script setup lang="ts">
 
     const route = useRoute();
     const msg = ref("");
-    const isGroup = ref(true);
     const group: Ref<Group> = ref({ id: 0, group_id: "", created_at: "", group_name: "", pfp: "", created_by: "" });
     const chats: Ref<Chat[]> = ref([]);
     const members: Ref<User[]> = ref([]);
@@ -68,6 +67,7 @@ s<script setup lang="ts">
 
         let filter: string[] = [];
         for(let i = 0; i < data1.length; i++){
+            //@ts-expect-error
             filter.push(data1[i].user_id);
         }
 
@@ -97,9 +97,12 @@ s<script setup lang="ts">
             if(!user.value) return;
 
             const { data, error } = await supabase.from("group_members").select().eq("user_id", user.value.id).eq("group_id", route.params.id);
-            if(error) throw error;
+            if(error){
+                navigateTo("/chat/group/error");
+                throw error;
+            }
             
-            if(data.length != 1) isGroup.value = false;
+            if(data.length != 1) navigateTo("/chat/group/error");
             else getGroup();
         }
 
@@ -110,17 +113,17 @@ s<script setup lang="ts">
 <template>
     <div class="flex h-fullscreen">
         <Sidebar />
-        <main v-if="isGroup" class="w-3/4 flex flex-col pb-2">
+        <main class="w-3/4 flex flex-col pb-2">
             <section class="w-screen ml-1 flex h-[5.5rem] items-center">
                 <img :src="group.pfp" alt="Friend pfp" width="48px" height="48px" />
                 <h1 class="text-6xl mx-1 font-mono leading-snug font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit h-fit">{{ group.group_name }}</h1>
-                <!-- <div class="flex space-x-3 items-center">
-                    <NuxtLink to="/add-member" class="hover:text-aero-100 hover:drop-shadow-navBtn transition-all duration-200 ease-out">
+                <div class="flex space-x-3 items-center">
+                    <NuxtLink :to="`/chat/group/${$route.params.id}/add`" class="hover:text-aero-100 hover:drop-shadow-navBtn transition-all duration-200 ease-out">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
                         </svg>
                     </NuxtLink>
-                </div> -->
+                </div>
             </section>
             <ul id="noScrollbar" class="ml-2 pb-2 overflow-y-scroll max-h-chatView flex w-screen flex-col-reverse">
                 <li v-for="chat in chats" class="flex space-x-2 hover:bg-shark-900 hover:cursor-default w-fit group rounded-md py-px px-2 transition-all duration-100 ease-out">
@@ -151,20 +154,11 @@ s<script setup lang="ts">
                 </button>
             </div>
         </main>
-        <main v-else id="bg-grid" class="2xl:w-5/6 w-9/12 flex flex-col justify-center items-center">
-            <h1 class="text-8xl uppercase font-mono font-black bg-clip-text border-b-[3px] border-b-snow/15 px-4 text-transparent bg-gradient-to-r from-snow to-65% to-aero-100">Not a group :(</h1>
-            <p class="text-2xl">You'll need to be added to this group before you can talk in it</p>
-        </main>
     </div>
 </template>
 
 <style scoped>
     #noScrollbar::-webkit-scrollbar{
         display: none;
-    }
-
-    #bg-grid{
-        background-color: #201e1f;
-        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23c9ffe2' fill-opacity='0.05'%3E%3Cpath opacity='.5' d='M96 95h4v1h-4v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4h-9v4h-1v-4H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15v-9H0v-1h15V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h9V0h1v15h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9h4v1h-4v9zm-1 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm9-10v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-10 0v-9h-9v9h9zm-9-10h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9zm10 0h9v-9h-9v9z'/%3E%3Cpath d='M6 5V0H5v5H0v1h5v94h1V6h94V5H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
     }
 </style>
