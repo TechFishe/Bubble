@@ -161,7 +161,7 @@
                 </li>
             </ul>
             <ul id="noScrollbar" class="pl-2 overflow-y-scroll">
-                <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
+                <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 py-0.5 first:pt-0 last:pb-0 last:border-b-transparent">
                     <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
                     <span class="text-xl flex flex-grow h-fit ml-1">{{ friend.username }}</span>
                     <NuxtLink :to="`/chat/private/${friend.user_id}`" class="hover:text-aero-200 transition-colors duration-200 ease-in">
@@ -205,7 +205,7 @@
                 </li>
             </ul>
             <ul id="noScrollbar" class="pl-2 overflow-y-scroll">
-                <li v-for="group in groups" class="flex items-center border-b border-b-snow/25 pb-1.5 last:pb-0 last:border-b-transparent">
+                <li v-for="group in groups" class="flex items-center border-b border-b-snow/25 py-0.5 first:pt-0 last:pb-0 last:border-b-transparent">
                     <img :src="group.pfp" alt="Group pfp" width="24px" height="24px" />
                     <span class="text-xl flex flex-grow h-fit ml-1">{{ group.group_name }}</span>
                     <NuxtLink :to="`/chat/group/${group.group_id}`" class="hover:text-aero-200 transition-colors duration-200 ease-in">
