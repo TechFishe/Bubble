@@ -114,6 +114,13 @@
             <section class="w-screen ml-1 flex h-[5.5rem] items-center">
                 <img :src="group.pfp" alt="Friend pfp" width="48px" height="48px" />
                 <h1 class="text-6xl ml-1 font-mono leading-snug font-semibold bg-clip-text text-transparent bg-gradient-to-r from-snow to-65% to-aero-100 w-fit h-fit">{{ group.group_name }}</h1>
+                <div class="flex space-x-4 items-center ml-6">
+                    <NuxtLink to="/add-member">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM3 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 9.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+                        </svg>
+                    </NuxtLink>
+                </div>
             </section>
             <ul id="noScrollbar" class="ml-2 pb-2 overflow-y-scroll max-h-chatView flex w-screen flex-col-reverse">
                 <li v-for="chat in chats" class="flex space-x-2 hover:bg-shark-900 hover:cursor-default w-fit group rounded-md py-px px-2 transition-all duration-100 ease-out">
@@ -145,8 +152,8 @@
             </div>
         </main>
         <main v-else id="bg-grid" class="2xl:w-5/6 w-9/12 flex flex-col justify-center items-center">
-            <h1 class="text-8xl uppercase font-mono font-black bg-clip-text border-b-[3px] border-b-snow/15 px-4 text-transparent bg-gradient-to-r from-snow to-65% to-aero-100">Not a friend :(</h1>
-            <p class="text-2xl">You'll need to add this person as a friend before you can talk with them</p>
+            <h1 class="text-8xl uppercase font-mono font-black bg-clip-text border-b-[3px] border-b-snow/15 px-4 text-transparent bg-gradient-to-r from-snow to-65% to-aero-100">Not a group :(</h1>
+            <p class="text-2xl">You'll need to be added to this group before you can talk in it</p>
         </main>
     </div>
 </template>
