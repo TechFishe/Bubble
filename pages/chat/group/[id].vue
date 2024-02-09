@@ -56,7 +56,7 @@
     async function getChats(){
         if(!user.value) return;
 
-        const { data, error } = await supabase.from("group_chats").select().eq("sent_to", route.params.id);
+        const { data, error } = await supabase.from("group_chats").select().eq("sent_to", route.params.id).order("id", { ascending: false });
         if(error) throw error;
 
         chats.value = data;
