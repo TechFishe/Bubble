@@ -46,6 +46,7 @@
 
     let friendIds: string[] = [],
       requestIds: string[] = [];
+
     for (let i = 0; i < data1.length; i++) {
       //@ts-expect-error
       let tempId = data1[i].user_2;

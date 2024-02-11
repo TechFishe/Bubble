@@ -3,10 +3,105 @@
     title: "Bubble | Add Member",
   });
 
+  interface User {
+    id: number;
+    user_id: string;
+    full_name: string;
+    pfp: string;
+    joined_at: string;
+    username: string;
+    birthday: string;
+  }
+
   const supabase = useSupabaseClient();
   const user = useSupabaseUser();
 
-  onMounted(async () => {});
+  const alertStore = useAlertStore();
+
+  const route = useRoute();
+  const list: Ref<User[]> = ref([]);
+  const members: Ref<string[]> = ref([]);
+
+  async function getMemberIds() {
+    if (!user.value) return;
+
+    const { data, error } = await supabase.from("group_members").select().eq("group_id", route.params.id).neq("user_id", user.value.id);
+    if (error) throw error;
+
+    for (let i = 0; i < data.length; i++) {
+      //@ts-expect-error
+      let tempData = data[i].user_id;
+      members.value.push(tempData);
+    }
+
+    getFriendIds();
+  }
+
+  async function getFriendIds() {
+    if (!user.value) return;
+
+    const { data: data1, error: error1 } = await supabase.from("friends").select().eq("user_1", user.value.id);
+    if (error1) throw error1;
+
+    const { data: data2, error: error2 } = await supabase.from("friends").select().eq("user_2", user.value.id);
+    if (error2) throw error2;
+
+    let friendIds: string[] = [];
+
+    for (let i = 0; i < data1.length; i++) {
+      //@ts-expect-error
+      let tempId = data1[i].user_2,
+        addId = true;
+      for (let i = 0; i < members.value.length; i++) {
+        if (tempId === members.value[i]) {
+          addId = false;
+          break;
+        }
+      }
+
+      if (addId) friendIds.push(tempId);
+    }
+    for (let i = 0; i < data2.length; i++) {
+      //@ts-expect-error
+      let tempId = data2[i].user_1,
+        addId = true;
+      for (let i = 0; i < members.value.length; i++) {
+        if (tempId === members.value[i]) {
+          addId = false;
+          break;
+        }
+      }
+
+      if (addId) friendIds.push(tempId);
+    }
+
+    getFinalFriends(friendIds);
+  }
+
+  async function getFinalFriends(friendIds: string[]) {
+    const { data, error } = await supabase.from("users").select().in("user_id", friendIds);
+    if (error) throw error;
+
+    list.value = data;
+  }
+
+  async function addMember(userIn: User) {
+    if (!user.value) return;
+
+    //@ts-expect-error
+    const { error } = await supabase.from("group_members").insert({ user_id: userIn.user_id, added_by: user.value.id, group_id: route.params.id, accepted: false }).single();
+    if (error) throw error;
+
+    alertStore.msg = "Request sent!";
+    alertStore.type = "ok";
+    alertStore.timesShown++;
+
+    getMemberIds();
+  }
+
+  onMounted(() => {
+    getMemberIds();
+  });
 </script>
 
 <template>
@@ -20,7 +115,7 @@
         </svg>
       </div>
       <ul class="grid w-full grid-cols-4 grid-rows-5">
-        <li v-for="user in list" class="flex items-center border-r border-r-snow/45 px-1 py-0.5 last:border-r-transparent">
+        <li v-for="user in list" class="flex items-center border-r border-r-snow/45 px-1 py-0.5">
           <img :src="user.pfp" alt="Friend pfp" width="32px" height="32px" />
           <span class="ml-1 flex h-fit flex-grow text-xl">{{ user.username }}</span>
           <button @click="addMember(user)" class="transition-colors duration-200 ease-in hover:text-aero-200">
