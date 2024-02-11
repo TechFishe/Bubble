@@ -1,15 +1,17 @@
 <script setup>
-    const user = useSupabaseUser();
+  const user = useSupabaseUser();
 
-    watch(user, async () => {
-        if (user.value) {
-            return navigateTo('/chat');
-        }
-    }, { immediate: true });
+  watch(
+    user,
+    async () => {
+      if (user.value) {
+        return navigateTo("/chat");
+      }
+    },
+    { immediate: true }
+  );
 </script>
 
 <template>
-    <div>
-        loading. . .
-    </div>
+  <div>loading. . .</div>
 </template>
