@@ -144,7 +144,7 @@ s
       groupChatChannel = supabase
         .channel("public:private_chats")
         .on("postgres_changes", { event: "INSERT", schema: "public", table: "group_chats", filter: groupMsgFilter }, (payload) => groupChatTableInsert(payload))
-        .on("postgres_changes", { event: "DELETE", schema: "public", table: "group_chats", filter: groupMsgFilter }, () => getChats());
+        .on("postgres_changes", { event: "DELETE", schema: "public", table: "group_chats", filter: groupMsgFilter }, (payload) => getChats());
       groupChatChannel.subscribe();
     }
 

@@ -41,21 +41,28 @@
 
     //@ts-expect-error
     let filterArray: string[] = [user.value.id, route.params.id];
-    const { data, error } = await supabase.from("private_chats").select().in("sent_to", filterArray).in("sent_by", filterArray).order("id", { ascending: false });
-    if (error) throw error;
+    const { data: data1, error: error1 } = await supabase.from("private_chats").select().in("sent_to", filterArray).in("sent_by", filterArray).order("id", { ascending: false });
+    if (error1) throw error1;
 
-    chats.value = data;
+    chats.value = data1;
+
+    const { error: error2 } = await supabase.from("notify").delete().eq("sent_by", route.params.id).eq("sent_to", user.value.id);
+    if (error2) throw error2;
   }
 
   async function sendChat() {
     if (!user.value) return;
 
     //@ts-expect-error
-    const { error } = await supabase.from("private_chats").insert({ msg: msg.value, sent_by: user.value.id, sent_to: friend.value.user_id });
-    if (error) throw error;
+    const { error: error1 } = await supabase.from("private_chats").insert({ msg: msg.value, sent_by: user.value.id, sent_to: friend.value.user_id });
+    if (error1) throw error1;
 
     msg.value = "";
     getChats();
+
+    //@ts-expect-error
+    const { error: error2 } = await supabase.from("notify").insert({ sent_by: user.value.id, sent_to: route.params.id, is_group: false });
+    if (error2) throw error2;
   }
 
   async function deleteChat(chatIn: Chat) {
@@ -79,13 +86,8 @@
     getChats();
   }
 
-  async function privateChatTableInsert(payload: any) {
-    let sentBy: User;
-    const { data: data1, error: error1 } = await supabase.from("users").select().eq("user_id", payload.new.sent_by).single();
-    if (error1) throw error1;
-    else sentBy = data1;
-
-    if (sentBy.user_id === friend.value.user_id) getChats();
+  function privateChatTableInsert(payload: any) {
+    if (payload.new.sent_by === route.params.id) getChats();
   }
 
   onMounted(() => {
@@ -129,7 +131,7 @@
         <img :src="friend.pfp" alt="Friend pfp" width="48px" height="48px" />
         <h1 class="ml-1 w-fit bg-gradient-to-r from-snow to-aero-100 to-65% bg-clip-text font-mono text-6xl font-semibold leading-snug text-transparent">{{ friend.username }}</h1>
       </section>
-      <ul id="noScrollbar" class="ml-2 flex max-h-chatView w-screen flex-col-reverse overflow-y-scroll pb-2">
+      <ul id="noScrollbar" class="-mt-4 ml-2 flex max-h-chatView w-screen flex-col-reverse overflow-y-scroll pb-2">
         <li v-for="chat in chats" class="group flex w-fit space-x-2 rounded-md px-2 py-px transition-all duration-100 ease-out hover:cursor-default hover:bg-shark-900">
           <p v-if="chat.sent_by === friend.user_id">
             <span class="text-sky-300">{{ friend.username }}</span

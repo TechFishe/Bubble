@@ -26,6 +26,16 @@
     created_by: string;
   }
 
+  interface Notify {
+    id: number;
+    created_at: string;
+    sent_by: string;
+    sent_to: string;
+    is_group: boolean;
+  }
+
+  import type { RealtimeChannel } from "@supabase/supabase-js";
+
   const supabase = useSupabaseClient();
   const user = useSupabaseUser();
 
@@ -34,6 +44,11 @@
 
   const groups: Ref<Group[]> = ref([]);
   const groupRequests: Ref<Group[]> = ref([]);
+
+  const notifications: Ref<Notify[]> = ref([]);
+  const showNotify = ref(true);
+
+  let notifyChannel: RealtimeChannel;
 
   async function getFriendIds() {
     if (!user.value) return;
@@ -142,9 +157,49 @@
     getGroupIds();
   }
 
+  async function getNotify() {
+    if (!user.value) return;
+
+    const { data, error } = await supabase.from("notify").select().eq("sent_to", user.value.id);
+    if (error) throw error;
+
+    notifications.value = data;
+  }
+
+  function privateCheckNotify(friendIn: User) {
+    for (let i = 0; i < notifications.value.length; i++) {
+      if (notifications.value[i].sent_by === friendIn.user_id) return true;
+    }
+
+    return false;
+  }
+
+  function privateGetNotify(friendIn: User) {
+    let outputNum = 0;
+    for (let i = 0; i < notifications.value.length; i++) {
+      if (notifications.value[i].sent_by === friendIn.user_id) outputNum++;
+    }
+
+    return outputNum;
+  }
+
   onMounted(() => {
+    function getChannels() {
+      if (!user.value) return;
+
+      let notifyFilter = `sent_to=eq.${user.value.id}`;
+      notifyChannel = supabase.channel("notify").on("postgres_changes", { event: "*", schema: "public", table: "notify", filter: notifyFilter }, (payload) => getNotify());
+      notifyChannel.subscribe();
+    }
+
     getFriendIds();
     getGroupIds();
+    getChannels();
+    getNotify();
+  });
+
+  onUnmounted(() => {
+    supabase.removeChannel(notifyChannel);
   });
 </script>
 
@@ -186,6 +241,9 @@
         <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 py-0.5 first:pt-0 last:border-b-transparent last:pb-0">
           <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
           <span class="ml-1 flex h-fit flex-grow text-xl">{{ friend.username }}</span>
+          <div v-if="privateCheckNotify(friend) && showNotify" id="bubble" class="mr-2 flex h-6 w-6 justify-center">
+            <span class="pt-px text-xs">{{ privateGetNotify(friend) }}</span>
+          </div>
           <NuxtLink :to="`/chat/private/${friend.user_id}`" class="transition-colors duration-200 ease-in hover:text-aero-200">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
               <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -213,12 +271,12 @@
             <p class="text-sm italic tracking-tight text-snow/75">Wants you to join!</p>
           </div>
           <div class="ml-1 flex flex-col justify-center space-y-1">
-            <button class="transition-colors duration-200 ease-in hover:text-aero-400">
+            <button @click="allowGroup(request)" class="transition-colors duration-200 ease-in hover:text-aero-400">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
               </svg>
             </button>
-            <button class="transition-colors duration-200 ease-in hover:text-red-400">
+            <button @click="rejectGroup(request)" class="transition-colors duration-200 ease-in hover:text-red-400">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
               </svg>
@@ -244,5 +302,10 @@
 <style scoped>
   #noScrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  #bubble {
+    background-color: transparent;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='%23c9ffe2'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 0 1 1.037-.443 48.282 48.282 0 0 0 5.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z' /%3e%3c/svg%3e");
   }
 </style>
