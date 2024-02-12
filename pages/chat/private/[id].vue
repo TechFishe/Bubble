@@ -86,8 +86,20 @@
     getChats();
   }
 
-  function privateChatTableInsert(payload: any) {
+  async function privateChatTableInsert(payload: any) {
     if (payload.new.sent_by === route.params.id) getChats();
+    if (document.visibilityState === "hidden" && Notification.permission === "granted") {
+      const { data, error } = await supabase.from("users").select().eq("user_id", payload.new.sent_by).single();
+      if (error) throw error;
+
+      const tempFriend: User = data;
+
+      let tempNotify = new Notification("Bubble | New chat", { body: `You got a new message from ${tempFriend.username}!` });
+      tempNotify.onclick = (event) => {
+        event.preventDefault();
+        window.open(`https://bubble-neon.vercel.app/chat/private/${payload.new.sent_by}`);
+      };
+    }
   }
 
   onMounted(() => {
@@ -116,6 +128,8 @@
 
     checkFriend();
     getChannels();
+
+    if (Notification.permission === "default") Notification.requestPermission();
   });
 
   onUnmounted(() => {
