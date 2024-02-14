@@ -7,16 +7,6 @@
   const user = useSupabaseUser();
   const userStore = useUserStore();
 
-  interface User {
-    id: number;
-    user_id: string;
-    full_name: string;
-    pfp: string;
-    joined_at: string;
-    username: string;
-    birthday: string;
-  }
-
   const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", pfp: "", joined_at: "", username: "", birthday: "" });
 
   onMounted(async () => {

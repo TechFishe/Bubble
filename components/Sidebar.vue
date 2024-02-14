@@ -1,39 +1,4 @@
 <script setup lang="ts">
-  interface User {
-    id: number;
-    user_id: string;
-    full_name: string;
-    pfp: string;
-    joined_at: string;
-    username: string;
-    birthday: string;
-  }
-
-  interface Chat {
-    id: number;
-    msg: string;
-    created_at: string;
-    sent_by: string;
-    sent_to: string;
-  }
-
-  interface Group {
-    id: number;
-    group_id: string;
-    created_at: string;
-    group_name: string;
-    pfp: string;
-    created_by: string;
-  }
-
-  interface Notify {
-    id: number;
-    created_at: string;
-    sent_by: string;
-    sent_to: string;
-    is_group: boolean;
-  }
-
   import type { RealtimeChannel } from "@supabase/supabase-js";
 
   const supabase = useSupabaseClient();
