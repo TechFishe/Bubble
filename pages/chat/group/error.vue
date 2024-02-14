@@ -1,5 +1,5 @@
 <template>
-  <main id="bg-grid" class="flex w-9/12 flex-col items-center justify-center 2xl:w-5/6">
+  <main id="bg-grid" class="flex w-3/4 flex-col items-center justify-center">
     <h1 class="border-b-[3px] border-b-snow/15 bg-gradient-to-r from-snow to-aero-100 to-65% bg-clip-text px-4 font-mono text-8xl font-black uppercase text-transparent">Not a member</h1>
     <p class="text-center text-2xl">You aren't yet a member of this group.<br />Someone from the group will have to add you frist before you can view it</p>
   </main>

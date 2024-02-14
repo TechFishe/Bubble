@@ -105,8 +105,8 @@
 </script>
 
 <template>
-  <main class="flex h-fullscreen w-screen items-center justify-center">
-    <div class="flex flex-col items-center space-y-2 rounded-lg bg-shark-950 px-2 py-2 md:w-2/3 2xl:w-1/2">
+  <main class="flex w-3/4 items-center justify-center">
+    <div class="flex w-2/3 flex-col items-center space-y-2 rounded-lg bg-shark-950 px-2 py-2">
       <h1 class="border-b-[3px] border-b-snow/15 bg-gradient-to-r from-snow to-aero-100 to-65% bg-clip-text px-4 font-mono text-7xl font-black uppercase text-transparent">Add Member</h1>
       <div class="flex h-8 w-1/2 items-center space-x-1 rounded-sm bg-shark-900 pr-2">
         <input type="search" placeholder="Search" class="w-full bg-shark-900 pl-2 text-lg outline-0 placeholder:italic" />

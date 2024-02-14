@@ -39,7 +39,7 @@
 </script>
 
 <template>
-  <main class="flex h-fullscreen w-screen items-center justify-center">
+  <main class="flex w-3/4 items-center justify-center">
     <div class="flex w-1/3 flex-col items-center rounded-lg bg-shark-950 px-2 py-2">
       <h1 class="border-b-[3px] border-b-snow/15 bg-gradient-to-r from-snow to-aero-100 to-65% bg-clip-text px-4 font-mono text-7xl font-black uppercase text-transparent">New group</h1>
       <input v-model="name" type="text" placeholder="Group name" class="mt-2 h-8 w-full rounded-sm bg-shark-900 pl-2 text-lg outline-0 placeholder:italic" />
