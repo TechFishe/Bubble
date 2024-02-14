@@ -1,45 +1,8 @@
-<script setup lang="ts">
-  useHead({
-    title: "Bubble | Chats",
-  });
-
-  const supabase = useSupabaseClient();
-  const user = useSupabaseUser();
-  const userStore = useUserStore();
-
-  const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", pfp: "", joined_at: "", username: "", birthday: "" });
-
-  onMounted(async () => {
-    async function getUser() {
-      if (!user.value) return;
-
-      const { data, error } = await supabase.from("users").select().eq("user_id", user.value.id).single();
-      if (error) throw error;
-
-      let tempData: User = data;
-
-      customUser.value = data;
-      userStore.id = tempData.id;
-      userStore.user_id = tempData.user_id;
-      userStore.full_name = tempData.full_name;
-      userStore.pfp = tempData.pfp;
-      userStore.joined_at = tempData.joined_at;
-      userStore.username = tempData.username;
-      userStore.birthday = tempData.birthday;
-    }
-
-    getUser();
-  });
-</script>
-
 <template>
-  <div class="flex h-fullscreen">
-    <Sidebar />
-    <main id="bg-grid" class="flex w-9/12 flex-col items-center justify-center 2xl:w-5/6">
-      <h1 class="border-b-[3px] border-b-snow/15 bg-gradient-to-r from-snow to-aero-100 to-65% bg-clip-text px-4 font-mono text-8xl font-black uppercase text-transparent">No friend picked</h1>
-      <p class="text-2xl">Click the ">" next to one of your friends to chat with them!</p>
-    </main>
-  </div>
+  <main id="bg-grid" class="flex w-9/12 flex-col items-center justify-center 2xl:w-5/6">
+    <h1 class="border-b-[3px] border-b-snow/15 bg-gradient-to-r from-snow to-aero-100 to-65% bg-clip-text px-4 font-mono text-8xl font-black uppercase text-transparent">No friend picked</h1>
+    <p class="text-2xl">Click the ">" next to one of your friends to chat with them!</p>
+  </main>
 </template>
 
 <style scoped>
