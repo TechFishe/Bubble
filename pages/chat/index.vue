@@ -1,5 +1,5 @@
 <template>
-  <main id="bg-grid" class="flex w-3/4 flex-col items-center justify-center 2xl:w-5/6">
+  <main id="bg-grid" class="flex w-3/4 flex-col items-center justify-center">
     <h1 class="border-b-[3px] border-b-snow/15 bg-gradient-to-r from-snow to-aero-100 to-65% bg-clip-text px-4 font-mono text-8xl font-black uppercase text-transparent">No friend picked</h1>
     <p class="text-2xl">Click the ">" next to one of your friends to chat with them!</p>
   </main>
