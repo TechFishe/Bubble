@@ -1,15 +1,16 @@
 <script setup lang="ts">
   import { useAlertStore } from "#imports";
-  import { useUserStore } from "#imports";
+
+  const supabase = useSupabaseClient();
+  const user = useSupabaseUser();
 
   const showAlert = ref(false);
   const loggedIn = ref(false);
+  const userPfp = ref("");
 
   const alertStore = useAlertStore();
-  const userStore = useUserStore();
 
   alertStore.$subscribe(newAlert, { detached: true });
-  userStore.$subscribe(changeIcon, { detached: true });
 
   function newAlert() {
     showAlert.value = true;
@@ -18,9 +19,31 @@
     }, 5000);
   }
 
-  function changeIcon() {
-    loggedIn.value = !loggedIn.value;
+  async function getPfp() {
+    if (!user.value) return;
+
+    const { data, error } = await supabase.from("users").select().eq("user_id", user.value.id).single();
+    if (error) throw error;
+
+    //@ts-expect-error
+    userPfp.value = data.pfp;
+    loggedIn.value = true;
   }
+
+  watch(
+    user,
+    () => {
+      console.log("hey!");
+      if (!user.value) {
+        loggedIn.value = false;
+        return;
+      }
+
+      getPfp();
+      console.log(user.value.id);
+    },
+    { immediate: true }
+  );
 </script>
 
 <template>
@@ -66,7 +89,7 @@
           </svg>
         </NuxtLink>
         <NuxtLink v-else to="/user" class="ml-1.5">
-          <img :src="userStore.pfp" alt="User pfp" width="40px" height="40px" />
+          <img :src="userPfp" alt="User pfp" width="40px" height="40px" />
         </NuxtLink>
       </nav>
       <article v-if="showAlert" :class="{ 'bg-red-400': alertStore.type === 'error', 'bg-amber-400': alertStore.type === 'warn', 'bg-aero-400': alertStore.type === 'ok' }" class="absolute left-1/2 right-1/2 top-24 h-10 w-1/6 -translate-x-1/2 rounded-b-md">

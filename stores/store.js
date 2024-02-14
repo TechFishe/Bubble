@@ -9,17 +9,3 @@ export const useAlertStore = defineStore('alertStore', {
         }
     }
 });
-
-export const useUserStore = defineStore('userStore', {
-    state: () => {
-        return{
-            id: 0,
-            user_id: "",
-            full_name: "",
-            pfp: "",
-            joined_at: "",
-            username: "",
-            birthday: ""
-        }
-    }
-});
