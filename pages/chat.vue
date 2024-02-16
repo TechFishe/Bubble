@@ -148,6 +148,13 @@
     return outputNum;
   }
 
+  watch(notifications, () => {
+    showNotify.value = false;
+    nextTick(() => {
+      showNotify.value = true;
+    });
+  });
+
   onMounted(() => {
     function getChannels() {
       if (!user.value) return;
