@@ -139,7 +139,7 @@
     return false;
   }
 
-  function getNotify(uuid: string) {
+  function getNotifyNum(uuid: string) {
     let outputNum = 0;
     for (let i = 0; i < notifications.value.length; i++) {
       if (notifications.value[i].sent_by === uuid) outputNum++;
@@ -208,7 +208,7 @@
             <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
             <span class="ml-1 flex h-fit flex-grow text-xl">{{ friend.username }}</span>
             <div v-if="checkNotify(friend.user_id) && showNotify" class="mr-2 rounded-full bg-aero-100 p-0.5 flex h-6 w-6 justify-center">
-              <span class="text-xs">{{ getNotify(friend.user_id) }}</span>
+              <span class="text-xs">{{ getNotifyNum(friend.user_id) }}</span>
             </div>
             <NuxtLink :to="`/chat/private/${friend.user_id}`" class="transition-colors duration-200 ease-in hover:text-aero-200">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
