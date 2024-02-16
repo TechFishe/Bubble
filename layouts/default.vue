@@ -33,14 +33,12 @@
   watch(
     user,
     () => {
-      console.log("hey!");
       if (!user.value) {
         loggedIn.value = false;
         return;
       }
 
       getPfp();
-      console.log(user.value.id);
     },
     { immediate: true }
   );
