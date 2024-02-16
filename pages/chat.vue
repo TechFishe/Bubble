@@ -131,18 +131,18 @@
     notifications.value = data;
   }
 
-  function privateCheckNotify(friendIn: User) {
+  function checkNotify(uuid: string) {
     for (let i = 0; i < notifications.value.length; i++) {
-      if (notifications.value[i].sent_by === friendIn.user_id) return true;
+      if (notifications.value[i].sent_by === uuid) return true;
     }
 
     return false;
   }
 
-  function privateGetNotify(friendIn: User) {
+  function getNotify(uuid: string) {
     let outputNum = 0;
     for (let i = 0; i < notifications.value.length; i++) {
-      if (notifications.value[i].sent_by === friendIn.user_id) outputNum++;
+      if (notifications.value[i].sent_by === uuid) outputNum++;
     }
 
     return outputNum;
@@ -207,8 +207,8 @@
           <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 py-0.5 first:pt-0 last:border-b-transparent last:pb-0">
             <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
             <span class="ml-1 flex h-fit flex-grow text-xl">{{ friend.username }}</span>
-            <div v-if="privateCheckNotify(friend) && showNotify" id="bubble" class="mr-2 flex h-6 w-6 justify-center">
-              <span class="pt-px text-xs">{{ privateGetNotify(friend) }}</span>
+            <div v-if="checkNotify(friend.user_id) && showNotify" class="mr-2 rounded-full bg-aero-100 p-0.5 flex h-6 w-6 justify-center">
+              <span class="text-xs">{{ getNotify(friend.user_id) }}</span>
             </div>
             <NuxtLink :to="`/chat/private/${friend.user_id}`" class="transition-colors duration-200 ease-in hover:text-aero-200">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
