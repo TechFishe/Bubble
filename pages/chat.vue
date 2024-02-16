@@ -207,7 +207,7 @@
           <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 py-0.5 first:pt-0 last:border-b-transparent last:pb-0">
             <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
             <span class="ml-1 flex h-fit flex-grow text-xl">{{ friend.username }}</span>
-            <div v-if="checkNotify(friend.user_id) && showNotify" class="mr-2 rounded-full bg-aero-100 p-0.5 flex h-6 w-6 justify-center">
+            <div v-if="checkNotify(friend.user_id) && showNotify" class="mr-2 rounded-full bg-aero-200 text-shark-950 p-0.5 flex h-6 w-6 justify-center">
               <span class="text-xs">{{ getNotifyNum(friend.user_id) }}</span>
             </div>
             <NuxtLink :to="`/chat/private/${friend.user_id}`" class="transition-colors duration-200 ease-in hover:text-aero-200">
