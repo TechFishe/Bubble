@@ -269,6 +269,9 @@
           <li v-for="group in groups" class="flex items-center border-b border-b-snow/25 py-0.5 first:pt-0 last:border-b-transparent last:pb-0">
             <img :src="group.pfp" alt="Group pfp" width="24px" height="24px" />
             <span class="ml-1 flex h-fit flex-grow text-xl">{{ group.group_name }}</span>
+            <div v-if="checkNotify(group.group_id) && showNotify" class="mr-2 flex h-6 w-6 justify-center rounded-full bg-aero-200 p-0.5 text-shark-950">
+              <span class="text-xs">{{ getNotifyNum(group.group_id) }}</span>
+            </div>
             <NuxtLink :to="`/chat/group/${group.group_id}`" class="transition-colors duration-200 ease-in hover:text-aero-200">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="h-6 w-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
