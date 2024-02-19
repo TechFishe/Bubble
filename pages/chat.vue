@@ -36,7 +36,7 @@
       //@ts-expect-error
       let tempId = data2[i].user_1;
       //@ts-expect-error
-      if (!data2[i].user_2_allow) requestIds.push(tempId);
+      if (!data2[i].accepted) requestIds.push(tempId);
       else friendIds.push(tempId);
     }
 
@@ -88,7 +88,7 @@
     if (!user.value) return;
 
     //@ts-expect-error
-    const { error } = await supabase.from("friends").update({ user_2_allow: true }).eq("user_1", requestIn.user_id).eq("user_2", user.value.id);
+    const { error } = await supabase.from("friends").update({ accepted: true }).eq("user_1", requestIn.user_id).eq("user_2", user.value.id);
     if (error) throw error;
 
     getFriendIds();

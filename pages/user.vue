@@ -5,7 +5,6 @@
 
   const supabase = useSupabaseClient();
   const user = useSupabaseUser();
-  const userStore = useUserStore();
 
   const customUser: Ref<User> = ref({ id: 0, user_id: "", full_name: "", pfp: "", joined_at: "", username: "", birthday: "" });
 
@@ -23,7 +22,6 @@
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
     else {
-      userStore.$reset();
       reloadNuxtApp();
     }
   }
