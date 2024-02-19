@@ -31,21 +31,30 @@ s
   async function getChats() {
     if (!user.value) return;
 
-    const { data, error } = await supabase.from("group_chats").select().eq("sent_to", route.params.id).order("id", { ascending: false });
-    if (error) throw error;
+    const { data: data1, error: error1 } = await supabase.from("group_chats").select().eq("sent_to", route.params.id).order("id", { ascending: false });
+    if (error1) throw error1;
 
-    chats.value = data;
+    chats.value = data1;
+
+    const { error: error2 } = await supabase.from("group_notify").delete().eq("sent_by", route.params.id).eq("sent_to", user.value.id);
+    if (error2) throw error2;
   }
 
   async function sendChat() {
     if (!user.value) return;
 
     //@ts-expect-error
-    const { error } = await supabase.from("group_chats").insert({ msg: msg.value, sent_by: user.value.id, sent_to: route.params.id });
-    if (error) throw error;
+    const { error: error1 } = await supabase.from("group_chats").insert({ msg: msg.value, sent_by: user.value.id, sent_to: route.params.id });
+    if (error1) throw error1;
 
     msg.value = "";
     getChats();
+
+    for (let i = 0; i < members.value.length; i++) {
+      //@ts-expect-error
+      const { error: error2 } = await supabase.from("group_notify").insert({ sent_by: route.params.id, sent_to: members.value[i].user_id });
+      if (error2) throw error2;
+    }
   }
 
   async function getMembers() {
@@ -93,7 +102,19 @@ s
   }
 
   async function groupChatTableInsert(payload: any) {
-    getChats();
+    if (payload.new.sent_by === route.params.id) getChats();
+    if (document.visibilityState === "hidden" && Notification.permission === "granted") {
+      const { data, error } = await supabase.from("groups").select().eq("group_id", payload.new.sent_by).single();
+      if (error) throw error;
+
+      const tempGroup: Group = data;
+
+      let tempNotify = new Notification("Bubble | New chat", { body: `You got a new message from ${tempGroup.group_name}!` });
+      tempNotify.onclick = (event) => {
+        event.preventDefault();
+        window.open(`https://bubble-neon.vercel.app/chat/private/${payload.new.sent_by}`);
+      };
+    }
   }
 
   onMounted(() => {

@@ -28,7 +28,7 @@
 
     chats.value = data1;
 
-    const { error: error2 } = await supabase.from("notify").delete().eq("sent_by", route.params.id).eq("sent_to", user.value.id);
+    const { error: error2 } = await supabase.from("private_notify").delete().eq("sent_by", route.params.id).eq("sent_to", user.value.id);
     if (error2) throw error2;
   }
 
@@ -43,7 +43,7 @@
     getChats();
 
     //@ts-expect-error
-    const { error: error2 } = await supabase.from("notify").insert({ sent_by: user.value.id, sent_to: route.params.id, is_group: false });
+    const { error: error2 } = await supabase.from("private_notify").insert({ sent_by: user.value.id, sent_to: route.params.id });
     if (error2) throw error2;
   }
 
@@ -110,8 +110,6 @@
 
     checkFriend();
     getChannels();
-
-    if (Notification.permission === "default") Notification.requestPermission();
   });
 
   onUnmounted(() => {

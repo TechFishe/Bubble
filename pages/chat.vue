@@ -13,7 +13,7 @@
   const notifications: Ref<Notify[]> = ref([]);
   const showNotify = ref(true);
 
-  let notifyChannel: RealtimeChannel;
+  let privateNotifyChannel: RealtimeChannel, groupNotifyChannel: RealtimeChannel;
 
   async function getFriendIds() {
     if (!user.value) return;
@@ -125,10 +125,13 @@
   async function getNotify() {
     if (!user.value) return;
 
-    const { data, error } = await supabase.from("notify").select().eq("sent_to", user.value.id);
-    if (error) throw error;
+    const { data: data1, error: error1 } = await supabase.from("private_notify").select().eq("sent_to", user.value.id);
+    if (error1) throw error1;
 
-    notifications.value = data;
+    const { data: data2, error: error2 } = await supabase.from("group_notify").select().eq("sent_to", user.value.id);
+    if (error2) throw error2;
+
+    notifications.value = data1.concat(data2);
   }
 
   function checkNotify(uuid: string) {
@@ -160,18 +163,23 @@
       if (!user.value) return;
 
       let notifyFilter = `sent_to=eq.${user.value.id}`;
-      notifyChannel = supabase.channel("notify").on("postgres_changes", { event: "*", schema: "public", table: "notify", filter: notifyFilter }, (payload) => getNotify());
-      notifyChannel.subscribe();
+      privateNotifyChannel = supabase.channel("private_notify").on("postgres_changes", { event: "*", schema: "public", table: "notify", filter: notifyFilter }, (payload) => getNotify());
+      groupNotifyChannel = supabase.channel("group_notify").on("postgres_changes", { event: "*", schema: "public", table: "notify", filter: notifyFilter }, (payload) => getNotify());
+      privateNotifyChannel.subscribe();
+      groupNotifyChannel.subscribe();
     }
 
     getFriendIds();
     getGroupIds();
     getChannels();
     getNotify();
+
+    if (Notification.permission === "default") Notification.requestPermission();
   });
 
   onUnmounted(() => {
-    supabase.removeChannel(notifyChannel);
+    supabase.removeChannel(privateNotifyChannel);
+    supabase.removeChannel(groupNotifyChannel);
   });
 </script>
 
@@ -214,7 +222,7 @@
           <li v-for="friend in friends" class="flex items-center border-b border-b-snow/25 py-0.5 first:pt-0 last:border-b-transparent last:pb-0">
             <img :src="friend.pfp" alt="Friend pfp" width="32px" height="32px" />
             <span class="ml-1 flex h-fit flex-grow text-xl">{{ friend.username }}</span>
-            <div v-if="checkNotify(friend.user_id) && showNotify" class="mr-2 rounded-full bg-aero-200 text-shark-950 p-0.5 flex h-6 w-6 justify-center">
+            <div v-if="checkNotify(friend.user_id) && showNotify" class="mr-2 flex h-6 w-6 justify-center rounded-full bg-aero-200 p-0.5 text-shark-950">
               <span class="text-xs">{{ getNotifyNum(friend.user_id) }}</span>
             </div>
             <NuxtLink :to="`/chat/private/${friend.user_id}`" class="transition-colors duration-200 ease-in hover:text-aero-200">
