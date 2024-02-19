@@ -153,9 +153,7 @@
 
   watch(notifications, () => {
     showNotify.value = false;
-    nextTick(() => {
-      showNotify.value = true;
-    });
+    showNotify.value = true;
   });
 
   onMounted(() => {
