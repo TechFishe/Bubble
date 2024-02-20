@@ -1,4 +1,11 @@
 <script setup lang="ts">
+  import type { RealtimeChannel } from "@supabase/supabase-js";
+
+  const supabase = useSupabaseClient();
+  const user = useSupabaseUser();
+
+  const friends: Ref<User[]> = ref([]);
+  const friendRequests: Ref<User[]> = ref([]);
 </script>
 
 <template>
