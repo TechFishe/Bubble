@@ -163,4 +163,11 @@
           </li>
         </ul>
       </article>
-</template>
+</template
+
+  
+<style scoped>
+  #noScrollbar::-webkit-scrollbar {
+    display: none;
+  }
+</style>
