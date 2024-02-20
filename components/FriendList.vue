@@ -6,6 +6,110 @@
 
   const friends: Ref<User[]> = ref([]);
   const friendRequests: Ref<User[]> = ref([]);
+
+  let privateNotifyChannel: RealtimeChannel;
+
+  async function getFriendIds() {
+    if (!user.value) return;
+
+    const { data: data1, error: error1 } = await supabase.from("friends").select().eq("user_1", user.value.id);
+    if (error1) throw error1;
+
+    const { data: data2, error: error2 } = await supabase.from("friends").select().eq("user_2", user.value.id);
+    if (error2) throw error2;
+
+    let friendIds: string[] = [],
+      requestIds: string[] = [];
+
+    for (let i = 0; i < data1.length; i++) {
+      //@ts-expect-error
+      let tempId = data1[i].user_2;
+      friendIds.push(tempId);
+    }
+    for (let i = 0; i < data2.length; i++) {
+      //@ts-expect-error
+      let tempId = data2[i].user_1;
+      //@ts-expect-error
+      if (!data2[i].accepted) requestIds.push(tempId);
+      else friendIds.push(tempId);
+    }
+
+    getFinalFriends(friendIds, requestIds);
+  }
+
+  async function getFinalFriends(friendIds: string[], requestIds: string[]) {
+    const { data: data1, error: error1 } = await supabase.from("users").select().in("user_id", friendIds);
+    if (error1) throw error1;
+
+    const { data: data2, error: error2 } = await supabase.from("users").select().in("user_id", requestIds);
+    if (error2) throw error2;
+
+    friends.value = data1;
+    friendRequests.value = data2;
+  }
+
+   async function allowFriend(requestIn: User) {
+    if (!user.value) return;
+
+    //@ts-expect-error
+    const { error } = await supabase.from("friends").update({ accepted: true }).eq("user_1", requestIn.user_id).eq("user_2", user.value.id);
+    if (error) throw error;
+
+    getFriendIds();
+  }
+
+  async function rejectFriend(requestIn: User) {
+    if (!user.value) return;
+
+    const { error } = await supabase.from("friends").delete().eq("user_1", requestIn.user_id).eq("user_2", user.value.id);
+    if (error) throw error;
+
+    getFriendIds();
+  }
+
+  async function getNotify() {
+    if (!user.value) return;
+
+    const { data, error } = await supabase.from("private_notify").select().eq("sent_to", user.value.id);
+    if (error) throw error;
+
+    notifications.value = data;
+  }
+
+  function checkNotify(uuid: string) {
+    for (let i = 0; i < notifications.value.length; i++) {
+      if (notifications.value[i].sent_by === uuid) return true;
+    }
+
+    return false;
+  }
+
+  function getNotifyNum(uuid: string) {
+    let outputNum = 0;
+    for (let i = 0; i < notifications.value.length; i++) {
+      if (notifications.value[i].sent_by === uuid) outputNum++;
+    }
+
+    return outputNum;
+  }
+
+  onMounted(() => {
+    function getChannels() {
+      if (!user.value) return;
+
+      let notifyFilter = `sent_to=eq.${user.value.id}`;
+      privateNotifyChannel = supabase.channel("private_notify").on("postgres_changes", { event: "*", schema: "public", table: "private_notify", filter: notifyFilter }, () => getNotify());
+      privateNotifyChannel.subscribe();
+    }
+
+    getFriendIds();
+    getChannels();
+    getNotify();
+  });
+
+  onUnmounted(() => {
+    supabase.removeChannel(privateNotifyChannel);
+  });
 </script>
 
 <template>
