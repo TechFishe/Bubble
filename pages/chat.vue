@@ -132,6 +132,7 @@
     if (error2) throw error2;
 
     notifications.value = data1.concat(data2);
+    console.log(notifications.value);
   }
 
   function checkNotify(uuid: string) {
@@ -151,18 +152,13 @@
     return outputNum;
   }
 
-  watch(notifications, () => {
-    showNotify.value = false;
-    showNotify.value = true;
-  });
-
   onMounted(() => {
     function getChannels() {
       if (!user.value) return;
 
       let notifyFilter = `sent_to=eq.${user.value.id}`;
-      privateNotifyChannel = supabase.channel("private_notify").on("postgres_changes", { event: "*", schema: "public", table: "notify", filter: notifyFilter }, (payload) => getNotify());
-      groupNotifyChannel = supabase.channel("group_notify").on("postgres_changes", { event: "*", schema: "public", table: "notify", filter: notifyFilter }, (payload) => getNotify());
+      privateNotifyChannel = supabase.channel("private_notify").on("postgres_changes", { event: "*", schema: "public", table: "private_notify", filter: notifyFilter }, () => getNotify());
+      groupNotifyChannel = supabase.channel("group_notify").on("postgres_changes", { event: "*", schema: "public", table: "group_notify", filter: notifyFilter }, () => getNotify());
       privateNotifyChannel.subscribe();
       groupNotifyChannel.subscribe();
     }
