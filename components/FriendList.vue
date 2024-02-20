@@ -163,7 +163,7 @@
           </li>
         </ul>
       </article>
-</template
+</template>
 
   
 <style scoped>
