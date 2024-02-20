@@ -7,6 +7,9 @@
   const friends: Ref<User[]> = ref([]);
   const friendRequests: Ref<User[]> = ref([]);
 
+  const notifications: Ref<Notify[]> = ref([]);
+  const showNotify = ref(true);
+
   let privateNotifyChannel: RealtimeChannel;
 
   async function getFriendIds() {
