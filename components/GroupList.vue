@@ -155,3 +155,10 @@
         </ul>
       </article>
 </template>
+
+
+<style scoped>
+  #noScrollbar::-webkit-scrollbar {
+    display: none;
+  }
+</style>
