@@ -30,7 +30,7 @@
 <template>
   <div class="flex h-fullscreen">
     <main>
-      <section class="flex h-24 py-1 w-screen items-center">
+      <section class="flex h-24 my-2 w-screen items-center">
         <img :src="customUser.pfp" alt="User pfp" width="96" height="96" />
         <h1 class="bg-gradient-to-r from-snow to-aero-100 to-65% bg-clip-text px-4 font-mono text-7xl font-black text-transparent">{{ customUser.full_name }}</h1>
         <div class="flex items-center space-x-3">
